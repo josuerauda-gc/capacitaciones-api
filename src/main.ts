@@ -1,0 +1,58 @@
+import * as dotenv from 'dotenv';
+dotenv.config();
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import ErrorHandlerMiddlerware from './presentation/middleware/error-handler-middleware';
+import GlobalResponse from './application-core/wrapper/global-response';
+import GlobalResponseMiddleware from './presentation/middleware/global-response-middleware';
+import { ValidationException } from './application-core/exception/validation-exception';
+import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ENVIRONMENT_DATA } from './application-core/interfaces/i-consul';
+import ConsulService from './infraestructure/services/consul/consul.service';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.enableCors({ allowedHeaders: '*' });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+      exceptionFactory: (errors) => {
+        // Personaliza el mensaje de error
+        console.log('===================');
+        const detailedErrors = errors?.map((error) => {
+          if (error.children) console.log(error.children);
+          return (
+            error.constraints || [
+              `${error.property} tiene un campo no válido o no existe.`,
+            ]
+          );
+        });
+        console.log('===================');
+        throw new ValidationException(
+          'Errores de validación',
+          detailedErrors.map((error) => Object.values(error)).flat(),
+        );
+      },
+    }),
+  );
+  app.useGlobalFilters(new ErrorHandlerMiddlerware());
+  //agregamos el middleware de errores globales
+  app.useGlobalInterceptors(new GlobalResponseMiddleware());
+  const config = new DocumentBuilder()
+    .setTitle('API de integración con Servicios de Cloudbeds')
+    .setDescription(
+      'Establece comunicación para distintas interacciones con servicios api de cloudbeds',
+    )
+    .setVersion('1.0')
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
+  const consul = app.get<ConsulService>(ConsulService);
+  const consulData = ENVIRONMENT_DATA.consul;
+  await consul.RegisterService(consulData);
+  await app.listen(process.env.APP_PORT || 3000);
+}
+bootstrap();

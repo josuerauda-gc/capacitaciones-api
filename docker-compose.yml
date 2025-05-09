@@ -1,0 +1,25 @@
+version: '3.0'
+
+services:
+  discovery:
+    container_name: discovery
+    image: consul:1.9.5
+    restart: always
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    networks:
+      - my_network
+    hostname: host.docker.internal
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    command: "agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0"
+    environment:
+      TZ: America/El_Salvador
+    volumes:
+      - ./server.json:/consul/config/server.json:ro
+      - ./certs/:/consul/config/certs/:ro
+
+networks:
+  my_network:
+    driver: bridge
