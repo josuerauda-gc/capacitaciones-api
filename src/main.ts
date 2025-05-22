@@ -42,9 +42,9 @@ async function bootstrap() {
   //agregamos el middleware de errores globales
   app.useGlobalInterceptors(new GlobalResponseMiddleware());
   const config = new DocumentBuilder()
-    .setTitle('API de integración con Servicios de Cloudbeds')
+    .setTitle('API de Capacitaciones Grupo Campestre')
     .setDescription(
-      'Establece comunicación para distintas interacciones con servicios api de cloudbeds',
+      'API para distintas funciones que componen a la app web de Capacitaciones de Grupo Campestre',
     )
     .setVersion('1.0')
     .build();
@@ -53,6 +53,10 @@ async function bootstrap() {
   const consul = app.get<ConsulService>(ConsulService);
   const consulData = ENVIRONMENT_DATA.consul;
   await consul.RegisterService(consulData);
-  await app.listen(process.env.APP_PORT || 3000);
+  await app.listen(process.env.APP_PORT || 3000, () => {
+    console.log(
+      `Servidor escuchando en puerto ${process.env.APP_PORT || 3000} 🚀`,
+    );
+  });
 }
 bootstrap();

@@ -1,0 +1,15 @@
+const AREA_SERVICE = Symbol('IArea');
+const CATEGORY_SERVICE = Symbol('ICategory');
+const TYPE_OBSERVATION_SERVICE = Symbol('ITypeObservation');
+const EVALUATION_SERVICE = Symbol('IEvaluation');
+const EVALUATION_DETAIL_SERVICE = Symbol('IEvaluationDetail');
+const EVALUATION_IMAGE_SERVICE = Symbol('IEvaluationImage');
+
+export {
+  AREA_SERVICE,
+  CATEGORY_SERVICE,
+  TYPE_OBSERVATION_SERVICE,
+  EVALUATION_SERVICE,
+  EVALUATION_DETAIL_SERVICE,
+  EVALUATION_IMAGE_SERVICE,
+};

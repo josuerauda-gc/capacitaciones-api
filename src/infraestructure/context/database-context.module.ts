@@ -17,4 +17,4 @@ import ENTITIES from 'src/application-core/domain/export-entity';
     }),
   ],
 })
-export class DatabaseContextModule { }
+export class DatabaseContextModule {}
