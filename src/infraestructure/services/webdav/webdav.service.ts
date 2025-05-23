@@ -16,7 +16,7 @@ export class WebdavService {
   async onModuleInit() {
     try {
       const contents = await this.webdavClient.getDirectoryContents(
-        '/DESARROLLO/media_bcapacitacion',
+        process.env.WEBDAV_PATH || '/',
       );
       console.log('Contenido WebDAV:', contents);
     } catch (error) {

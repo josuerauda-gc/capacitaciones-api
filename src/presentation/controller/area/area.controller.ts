@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { AreaDto } from 'src/application-core/dto/general/area-dto';
 import { GetAllAreas } from 'src/application-core/use-cases/get-all-areas';
 
-@Controller('area')
+@Controller('areas')
 export class AreaController {
   constructor(private readonly getAllAreas: GetAllAreas) {}
 

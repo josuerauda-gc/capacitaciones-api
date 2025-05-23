@@ -12,6 +12,8 @@ import { CreateEvaluationDetail } from './use-cases/create-evaluation-detail';
 import { GetEvaluationDetailById } from './use-cases/get-evaluation-detail-by-id';
 import { UpdateEvaluationDetail } from './use-cases/update-evaluation-detail';
 import { DeleteEvaluationDetail } from './use-cases/delete-evaluation-detail';
+import { GetEvaluationsReports } from './use-cases/get-evaluations-reports';
+import { GetLastsEvaluations } from './use-cases/get-lasts-evaluations';
 
 @Module({
   imports: [DatabaseContextModule, InfraestructureExportModule],
@@ -27,6 +29,8 @@ import { DeleteEvaluationDetail } from './use-cases/delete-evaluation-detail';
     CreateEvaluationDetail,
     UpdateEvaluationDetail,
     DeleteEvaluationDetail,
+    GetEvaluationsReports,
+    GetLastsEvaluations,
   ],
   exports: [
     GetAllAreas,
@@ -40,6 +44,8 @@ import { DeleteEvaluationDetail } from './use-cases/delete-evaluation-detail';
     CreateEvaluationDetail,
     UpdateEvaluationDetail,
     DeleteEvaluationDetail,
+    GetEvaluationsReports,
+    GetLastsEvaluations,
   ],
 })
 export class ApplicationCoreExportModule {}

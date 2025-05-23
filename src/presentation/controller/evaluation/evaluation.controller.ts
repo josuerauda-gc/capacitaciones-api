@@ -5,6 +5,8 @@ import { CloseEvaluation } from 'src/application-core/use-cases/close-evaluation
 import { CreateEvaluation } from 'src/application-core/use-cases/create-evaluation';
 import { GetAllEvaluations } from 'src/application-core/use-cases/get-all-evaluations';
 import { GetEvaluationById } from 'src/application-core/use-cases/get-evaluation-by-id';
+import { GetEvaluationsReports } from 'src/application-core/use-cases/get-evaluations-reports';
+import { GetLastsEvaluations } from 'src/application-core/use-cases/get-lasts-evaluations';
 
 @Controller('evaluations')
 export class EvaluationController {
@@ -13,11 +15,23 @@ export class EvaluationController {
     private readonly getEvaluationById: GetEvaluationById,
     private readonly createEvaluation: CreateEvaluation,
     private readonly closeEvaluation: CloseEvaluation,
+    private readonly getEvaluationsReports: GetEvaluationsReports,
+    private readonly getLastEvaluationsBranch: GetLastsEvaluations,
   ) {}
 
   @Get()
   async getAllEvaluations() {
     return await this.getAllEvaluationsUseCase.execute();
+  }
+
+  @Get('lasts')
+  async getLastsEvaluations() {
+    return await this.getLastEvaluationsBranch.execute();
+  }
+
+  @Get('reports')
+  async getAllEvaluationsReports() {
+    return await this.getEvaluationsReports.execute();
   }
 
   @Get(':evaluationId')
