@@ -1,14 +1,15 @@
+import * as fs from 'fs';
 import { Injectable } from '@nestjs/common';
 import { ImagesDto } from 'src/application-core/dto/general/images-dto';
 import { AuthType, createClient, WebDAVClient } from 'webdav';
-import { Base64ConverterService } from '../base64-converter/base64-converter.service';
 import { NotFoundException } from 'src/application-core/exception/not-found-exception';
+import { ValidationException } from 'src/application-core/exception/validation-exception';
 
 @Injectable()
 export class WebdavService {
   private readonly webdavClient: WebDAVClient;
 
-  constructor(private readonly base64ConverterService: Base64ConverterService) {
+  constructor() {
     this.webdavClient = createClient(process.env.WEBDAV_URL, {
       authType: AuthType.Password,
       username: process.env.WEBDAV_USERNAME,
@@ -26,6 +27,17 @@ export class WebdavService {
           'Se conectó correctamente al servidor por medio de WebDAV 🌐',
         );
       }
+      const imgTest = fs.readFileSync(
+        'src/infraestructure/services/webdav/mip.jpg',
+      );
+      await this.saveImage('test', {
+        idImg: 0,
+        name: 'mip.jpg',
+        blobFile: new Blob([imgTest]),
+      });
+      const imageSaved = await this.getImage('test', 'mip.jpg');
+      console.log('Imagen guardada y obtenida correctamente:', imageSaved);
+      // await this.deleteImage('test', 'mip.jpg');
     } catch (error) {
       console.error('Error al obtener el contenido WebDAV:', error.message);
       if (error.response) {
@@ -35,20 +47,37 @@ export class WebdavService {
   }
 
   async saveImage(evaluationCode: string, image: ImagesDto): Promise<boolean> {
-    const existsFolder = await this.webdavClient.exists(evaluationCode);
-    if (!existsFolder) {
-      await this.webdavClient.createDirectory(evaluationCode);
+    if (image.blobFile instanceof Blob === false) {
+      throw new ValidationException(
+        'El archivo de imagen debe ser una instancia de Blob.',
+      );
     }
-
-    const path = `${process.env.WEBDAV_PATH || '/'}${evaluationCode}/${image.name}`;
-    const blobToBase64Image = await this.base64ConverterService.blobToBase64(
-      image.blobFile,
+    const initialPath = `${process.env.WEBDAV_PATH || '/'}`;
+    const existsFolder = await this.webdavClient.exists(
+      `${initialPath}${evaluationCode}`,
     );
-    await this.webdavClient.putFileContents(path, blobToBase64Image, {
-      overwrite: true,
-    });
-
-    return true;
+    if (!existsFolder) {
+      await this.webdavClient.createDirectory(
+        `${initialPath}${evaluationCode}`,
+      );
+    }
+    const typeImage = image.name.split('.').pop();
+    if (!['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG'].includes(typeImage)) {
+      throw new NotFoundException(
+        `El tipo de imagen ${typeImage} no es válido. Solo se permiten jpg, jpeg y png.`,
+      );
+    }
+    const path = `${initialPath}${evaluationCode}/${image.name}`;
+    return await this.webdavClient.putFileContents(
+      path,
+      await image.blobFile.arrayBuffer(),
+      {
+        overwrite: true,
+        headers: {
+          'Content-Type': `image/${typeImage.toLowerCase()}`,
+        },
+      },
+    );
   }
 
   async getImage(evaluationCode: string, imageName: string): Promise<Blob> {
@@ -63,12 +92,19 @@ export class WebdavService {
       fileContents.byteOffset,
       fileContents.byteOffset + fileContents.byteLength,
     );
-
-    return new Blob([arrayBuffer]);
+    const typeImage = imageName.split('.').pop();
+    if (!['jpg', 'JPG', 'jpeg', 'JPEG', 'png', 'PNG'].includes(typeImage)) {
+      throw new NotFoundException(
+        `El tipo de imagen ${typeImage} no es válido. Solo se permiten jpg, jpeg y png.`,
+      );
+    }
+    return new Blob([arrayBuffer], {
+      type: `image/${typeImage.toLowerCase()}`,
+    });
   }
 
   async deleteImage(evaluationCode: string, imageName: string): Promise<void> {
-    const path = `${evaluationCode}/${imageName}`;
+    const path = `${process.env.WEBDAV_PATH || '/'}${evaluationCode}/${imageName}`;
     await this.webdavClient.deleteFile(path);
   }
 }

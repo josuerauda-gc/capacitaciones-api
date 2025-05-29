@@ -2,13 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class Base64ConverterService {
-  public blobToBase64(blob: Blob): Promise<string | ArrayBuffer | null> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result); // incluye el MIME
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
+  public async blobToBase64(blob: Blob): Promise<string> {
+    const arrayBuffer = await blob.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const base64String = buffer.toString('base64');
+    return base64String;
   }
 
   public base64ToBuffer(base64String: string): ArrayBuffer {
