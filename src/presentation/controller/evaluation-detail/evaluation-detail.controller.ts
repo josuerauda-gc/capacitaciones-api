@@ -8,7 +8,9 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 import { EvaluationDetailRequestDto } from 'src/application-core/dto/requests/evaluation-detail-dto';
+import { EvaluationDetailResponseDto } from 'src/application-core/dto/responses/evaluation-detail-dto';
 import { ValidationException } from 'src/application-core/exception/validation-exception';
 import { CreateEvaluationDetail } from 'src/application-core/use-cases/create-evaluation-detail';
 import { DeleteEvaluationDetail } from 'src/application-core/use-cases/delete-evaluation-detail';
@@ -25,6 +27,11 @@ export class EvaluationDetailController {
   ) {}
 
   @Get(':evaluationDetailId')
+  @ApiResponse({
+    status: 200,
+    description: 'Obtener detalle de evaluación por ID',
+    type: EvaluationDetailResponseDto,
+  })
   async getEvaluationDetailByIdHandler(
     @Param('evaluationDetailId') evaluationDetailId: number,
   ) {
@@ -32,6 +39,11 @@ export class EvaluationDetailController {
   }
 
   @Post()
+  @ApiResponse({
+    status: 201,
+    description: 'Detalle de evaluación creado exitosamente',
+    type: EvaluationDetailResponseDto,
+  })
   async createEvaluationDetailHandler(
     @Headers('authorization') authorization: string,
     @Body() evaluationDetailDto: EvaluationDetailRequestDto,
@@ -47,6 +59,11 @@ export class EvaluationDetailController {
   }
 
   @Put(':evaluationDetailId')
+  @ApiResponse({
+    status: 200,
+    description: 'Detalle de evaluación actualizado exitosamente',
+    type: EvaluationDetailResponseDto,
+  })
   async updateEvaluationDetailHandler(
     @Headers('authorization') authorization: string,
     @Param('evaluationDetailId') evaluationDetailId: number,
@@ -64,6 +81,11 @@ export class EvaluationDetailController {
   }
 
   @Delete(':evaluationDetailId')
+  @ApiResponse({
+    status: 200,
+    description: 'Detalle de evaluación eliminado exitosamente',
+    type: EvaluationDetailResponseDto,
+  })
   async deleteEvaluationDetailHandler(
     @Headers('authorization') authorization: string,
     @Param('evaluationDetailId') evaluationDetailId: number,

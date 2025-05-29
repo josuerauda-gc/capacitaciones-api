@@ -1,6 +1,9 @@
 import { Body, Controller, Get, Headers, Param, Post } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 import { CloseEvaluationDto } from 'src/application-core/dto/requests/close-evaluation-dto';
 import { EvaluationRequestDto } from 'src/application-core/dto/requests/evaluation-dto';
+import { EvaluationResponseDto } from 'src/application-core/dto/responses/evaluation-dto';
+import { EvaluationReportDto } from 'src/application-core/dto/responses/evaluation-report-dto';
 import { ValidationException } from 'src/application-core/exception/validation-exception';
 import { CloseEvaluation } from 'src/application-core/use-cases/close-evaluation';
 import { CreateEvaluation } from 'src/application-core/use-cases/create-evaluation';
@@ -21,26 +24,51 @@ export class EvaluationController {
   ) {}
 
   @Get()
+  @ApiResponse({
+    status: 200,
+    description: 'Listado de evaluaciones',
+    type: EvaluationResponseDto,
+  })
   async getAllEvaluations() {
     return await this.getAllEvaluationsUseCase.execute();
   }
 
   @Get('lasts')
+  @ApiResponse({
+    status: 200,
+    description: 'Listado de últimas evaluaciones de cada sucursal',
+    type: EvaluationResponseDto,
+  })
   async getLastsEvaluations() {
     return await this.getLastEvaluationsBranch.execute();
   }
 
   @Get('reports')
+  @ApiResponse({
+    status: 200,
+    description: 'Listado de evaluaciones',
+    type: EvaluationReportDto,
+  })
   async getAllEvaluationsReports() {
     return await this.getEvaluationsReports.execute();
   }
 
   @Get(':evaluationId')
+  @ApiResponse({
+    status: 200,
+    description: 'Obtener evaluación por ID',
+    type: EvaluationResponseDto,
+  })
   async getEvaluationByIdHandler(@Param('evaluationId') evaluationId: number) {
     return await this.getEvaluationById.execute(evaluationId);
   }
 
   @Post()
+  @ApiResponse({
+    status: 201,
+    description: 'Evaluación creada exitosamente',
+    type: EvaluationResponseDto,
+  })
   async saveEvaluation(
     @Headers('authorization') authorization: string,
     @Body() evaluationDto: EvaluationRequestDto,
@@ -53,6 +81,11 @@ export class EvaluationController {
   }
 
   @Post('close/:evaluationId')
+  @ApiResponse({
+    status: 200,
+    description: 'Evaluación cerrada exitosamente',
+    type: EvaluationResponseDto,
+  })
   async closeEvaluationHandler(
     @Headers('authorization') authorization: string,
     @Param('evaluationId') evaluationId: number,
