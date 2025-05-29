@@ -1,6 +1,46 @@
 version: '3.0'
-
 services:
+  seguridad:
+    container_name: security
+    image: merino92/security:2.0.0
+    restart: always
+    ports:
+      - "88:80"
+    depends_on:
+      - database
+      - discovery
+    networks:
+      - my_network
+    hostname: host.docker.internal
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    environment:
+      DATABASE_CONNECTION: Host=${DB_HOST_SECURITY};Database=${DB_NAME_SECURITY};Username=${DB_USER_SECURITY};Password=${DB_PASSWORD_SECURITY}
+      #CACHE_HOST: redis_server
+      CACHE_PORT: 6379
+      CONSUL_HOST: host.docker.internal
+      CONSUL_PORT: 8500
+      CONSUL_SERVICE_NAME: security
+      CONSUL_SERVICE_ID: security
+      API_HOST: host.docker.internal
+      API_PORT: 88
+      EXPIRATION_TIME: 720
+      TZ: America/El_Salvador
+  database:
+    container_name: database
+    image: postgres:12
+    ports:
+      - "${DB_PORT_SECURITY}:${DB_PORT_SECURITY}"
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME_SECURITY}
+      POSTGRES_USER: ${DB_USER_SECURITY}
+      POSTGRES_PASSWORD: ${DB_PASSWORD_SECURITY}
+      TZ: America/El_Salvador
+    volumes:
+      - postgres-data17:/var/lib/postgresql/data
+    networks:
+      - my_network
   discovery:
     container_name: discovery
     image: consul:1.9.5
@@ -23,3 +63,6 @@ services:
 networks:
   my_network:
     driver: bridge
+
+volumes:
+  postgres-data17:

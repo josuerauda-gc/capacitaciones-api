@@ -6,12 +6,14 @@ export default interface IEvaluationDetail {
   getEvaluationDetailById(id: number): Promise<EvaluationDetailEntity>;
   saveEvaluationDetail(
     evaluationDetail: EvaluationDetailRequestDto,
+    username: string,
   ): Promise<EvaluationDetailEntity>;
   updateEvaluationDetail(
     id: number,
     evaluationDetail: EvaluationDetailRequestDto,
+    username: string,
   ): Promise<EvaluationDetailEntity>;
-  deleteEvaluationDetail(id: number): Promise<string>;
+  deleteEvaluationDetail(id: number, username: string): Promise<string>;
   getAllEvaluationDetailsByEvaluationId(
     evaluationId: number,
   ): Promise<EvaluationDetailEntity[]>;

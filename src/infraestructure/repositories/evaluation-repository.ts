@@ -30,11 +30,13 @@ export class EvaluationRepository implements IEvaluation {
 
   async saveEvaluation(
     evaluation: EvaluationRequestDto,
+    username: string,
   ): Promise<EvaluationEntity> {
     const referenceCode = uuidv4().replace(/-/g, '').substring(0, 20);
     const existingEvaluation = await this.evaluationRepository.findOne({
       where: {
         branchId: evaluation.branchId,
+        isOpen: true,
       },
     });
     if (existingEvaluation) {
@@ -47,6 +49,7 @@ export class EvaluationRepository implements IEvaluation {
       referenceCode,
       date: new Date(),
       isOpen: true,
+      username,
       ...evaluation,
       comments: evaluation.comments ? evaluation.comments : '',
     };
@@ -73,12 +76,18 @@ export class EvaluationRepository implements IEvaluation {
   async closeEvaluation(
     id: number,
     evaluationClose: CloseEvaluationDto,
+    username: string,
   ): Promise<EvaluationEntity> {
     const existingEvaluation = await this.evaluationRepository.findOne({
       where: { evaluationId: id },
     });
     if (!existingEvaluation) {
       throw new NotFoundException('Evaluación no encontrada');
+    }
+    if (username !== existingEvaluation.username) {
+      throw new ValidationException(
+        'No tienes permiso para cerrar esta evaluación',
+      );
     }
     if (!existingEvaluation.isOpen) {
       throw new ValidationException('La evaluación ya está cerrada');

@@ -71,11 +71,36 @@ export default class ConsulService {
       // console.log(serviceData);
 
       await conn.agent.service.register(serviceData);
-      console.log('Servicio Registrado Exitosamente');
+      console.log('Servicio Registrado Exitosamente en Consul 📄');
     } catch (error) {
       console.error(error);
       console.warn('servicio no registrado, intentando nuevamente el registro');
       setTimeout(async () => await this.RegisterService(consulData), 10000);
+    }
+  }
+
+  async GetServiceData(serviceName: string): Promise<ConsulData> {
+    try {
+      const conn = new Consul({
+        host: this.consulData.host,
+        port: this.consulData.port,
+        promisify: true,
+      });
+      const services: any = await conn.catalog.service.nodes(serviceName);
+      // console.log(services);
+      const service = services[0];
+      // console.log(`Servicio ${serviceName}: `, service);
+      return {
+        host: service.ServiceAddress,
+        port: service.ServicePort.toString(),
+        id: service.ID,
+        name: service.ServiceName,
+        appHost: service.ServiceAddress,
+        appPort: service.ServicePort.toString(),
+      };
+    } catch (error) {
+      console.error('Error getting service data:', error);
+      throw [`Error al obtener servicio ${serviceName}`, error];
     }
   }
 }

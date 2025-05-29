@@ -6,6 +6,8 @@ import {
 import { EvaluationDetailsRepository } from 'src/infraestructure/repositories/evaluation-details-repository';
 import { EvaluationImageRepository } from 'src/infraestructure/repositories/evaluation-image-repository';
 import { NotFoundException } from '../exception/not-found-exception';
+import SecurityService from 'src/infraestructure/services/security/security.service';
+import { WebdavService } from 'src/infraestructure/services/webdav/webdav.service';
 
 @Injectable()
 export class DeleteEvaluationDetail {
@@ -14,9 +16,12 @@ export class DeleteEvaluationDetail {
     private readonly evaluationDetailRepository: EvaluationDetailsRepository,
     @Inject(EVALUATION_IMAGE_SERVICE)
     private readonly evaluationImageRepository: EvaluationImageRepository,
+    private readonly securityService: SecurityService,
+    private readonly webdavService: WebdavService,
   ) {}
 
-  async execute(evaluationDetailId: number): Promise<string> {
+  async execute(evaluationDetailId: number, token: string): Promise<string> {
+    const userData = await this.securityService.GetUserData(token);
     const evaluationDetail =
       await this.evaluationDetailRepository.getEvaluationDetailById(
         evaluationDetailId,
@@ -30,11 +35,16 @@ export class DeleteEvaluationDetail {
       );
     if (evaluationImages.length > 0) {
       evaluationImages.forEach(async (image) => {
+        await this.webdavService.deleteImage(
+          evaluationDetail.evaluation.referenceCode,
+          image.imgPath,
+        );
         await this.evaluationImageRepository.deleteEvaluationImage(image.nKey);
       });
     }
     return await this.evaluationDetailRepository.deleteEvaluationDetail(
       evaluationDetailId,
+      userData.employedUserName,
     );
   }
 }

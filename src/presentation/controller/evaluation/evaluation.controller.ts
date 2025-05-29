@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Param, Post } from '@nestjs/common';
 import { CloseEvaluationDto } from 'src/application-core/dto/requests/close-evaluation-dto';
 import { EvaluationRequestDto } from 'src/application-core/dto/requests/evaluation-dto';
+import { ValidationException } from 'src/application-core/exception/validation-exception';
 import { CloseEvaluation } from 'src/application-core/use-cases/close-evaluation';
 import { CreateEvaluation } from 'src/application-core/use-cases/create-evaluation';
 import { GetAllEvaluations } from 'src/application-core/use-cases/get-all-evaluations';
@@ -40,16 +41,31 @@ export class EvaluationController {
   }
 
   @Post()
-  async saveEvaluation(@Body() evaluationDto: EvaluationRequestDto) {
-    console.log(evaluationDto);
-    return await this.createEvaluation.execute(evaluationDto);
+  async saveEvaluation(
+    @Headers('authorization') authorization: string,
+    @Body() evaluationDto: EvaluationRequestDto,
+  ) {
+    if (!authorization) {
+      throw new ValidationException('Authorization header is required');
+    }
+    const token = authorization.split(' ')[1];
+    return await this.createEvaluation.execute(evaluationDto, token);
   }
 
   @Post('close/:evaluationId')
   async closeEvaluationHandler(
+    @Headers('authorization') authorization: string,
     @Param('evaluationId') evaluationId: number,
     @Body() closeEvaluationDto: CloseEvaluationDto,
   ) {
-    return await this.closeEvaluation.execute(evaluationId, closeEvaluationDto);
+    if (!authorization) {
+      throw new ValidationException('Authorization header is required');
+    }
+    const token = authorization.split(' ')[1];
+    return await this.closeEvaluation.execute(
+      evaluationId,
+      closeEvaluationDto,
+      token,
+    );
   }
 }

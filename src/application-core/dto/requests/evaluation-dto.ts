@@ -22,10 +22,10 @@ export class EvaluationRequestDto {
   @IsString({ message: 'evaluatorName debe ser un string.' })
   @ApiProperty({ description: 'Nombre de evaluador' })
   evaluatorName: string;
-  @IsNotEmpty({ message: 'username es requerido.' })
-  @IsString({ message: 'username debe ser un string.' })
-  @ApiProperty({ description: 'Nombre de usuario' })
-  username: string;
+  // @IsNotEmpty({ message: 'username es requerido.' })
+  // @IsString({ message: 'username debe ser un string.' })
+  // @ApiProperty({ description: 'Nombre de usuario' })
+  // username?: string;
   @IsOptional()
   @IsString({ message: 'comments debe ser un string.' })
   @ApiProperty({ description: 'Comentarios' })

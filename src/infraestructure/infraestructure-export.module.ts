@@ -19,6 +19,7 @@ import { TypeObservationRepository } from './repositories/type-observation-repos
 import { EvaluationRepository } from './repositories/evaluation-repository';
 import { EvaluationDetailsRepository } from './repositories/evaluation-details-repository';
 import { EvaluationImageRepository } from './repositories/evaluation-image-repository';
+import SecurityService from './services/security/security.service';
 
 @Module({
   imports: [DatabaseContextModule, TypeOrmModule.forFeature(ENTITIES)],
@@ -50,11 +51,13 @@ import { EvaluationImageRepository } from './repositories/evaluation-image-repos
       provide: EVALUATION_IMAGE_SERVICE,
       useClass: EvaluationImageRepository,
     },
+    SecurityService,
   ],
   exports: [
     ConsulService,
     WebdavService,
     Base64ConverterService,
+    SecurityService,
     AREA_SERVICE,
     CATEGORY_SERVICE,
     TYPE_OBSERVATION_SERVICE,
