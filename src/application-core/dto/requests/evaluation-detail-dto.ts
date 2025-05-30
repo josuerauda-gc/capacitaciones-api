@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ImagesDto } from '../general/images-dto';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsArray, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class EvaluationDetailRequestDto {
   @IsNotEmpty({ message: 'ID de detalle de evaluación no debe ser vacío' })
@@ -19,6 +19,7 @@ export class EvaluationDetailRequestDto {
   @ApiProperty({ description: 'Comentarios' })
   comments: string;
   @IsOptional()
+  @IsArray({ message: 'images debe ser un arreglo.' })
   @ApiProperty({ description: 'Listado de imagenes', type: [ImagesDto] })
   images?: ImagesDto[];
 
