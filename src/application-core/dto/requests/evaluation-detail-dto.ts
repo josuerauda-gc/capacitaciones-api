@@ -19,7 +19,7 @@ export class EvaluationDetailRequestDto {
   @ApiProperty({ description: 'Comentarios' })
   comments: string;
   @IsOptional()
-  @ApiProperty({ description: 'Listado de imagenes' })
+  @ApiProperty({ description: 'Listado de imagenes', type: [ImagesDto] })
   images?: ImagesDto[];
 
   constructor(partial: Partial<EvaluationDetailRequestDto>) {

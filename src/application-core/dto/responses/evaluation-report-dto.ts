@@ -1,5 +1,4 @@
 import { Exclude, Expose } from 'class-transformer';
-import { ImagesDto } from '../general/images-dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { AreaEntity } from 'src/application-core/domain/entities/area-entity';
 import { CategoryEntity } from 'src/application-core/domain/entities/category-entity';
@@ -54,9 +53,6 @@ export class EvaluationReportDto {
   @Expose()
   @ApiProperty({ description: 'Comentarios' })
   comments: string;
-  @Expose()
-  @ApiProperty({ description: 'Listado de imagenes' })
-  images?: ImagesDto[];
   @Expose()
   @ApiProperty()
   date: Date;

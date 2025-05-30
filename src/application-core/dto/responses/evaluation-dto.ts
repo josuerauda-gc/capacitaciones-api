@@ -1,4 +1,4 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { EvaluationDetailResponseDto } from './evaluation-detail-dto';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -34,7 +34,11 @@ export class EvaluationResponseDto {
   @ApiProperty({ description: 'Fecha de evaluación' })
   date: Date;
   @Expose()
-  @ApiProperty({ description: 'Detalles de Evaluación' })
+  @Type(() => EvaluationDetailResponseDto)
+  @ApiProperty({
+    description: 'Detalles de Evaluación',
+    type: [EvaluationDetailResponseDto],
+  })
   evaluationDetails?: EvaluationDetailResponseDto[];
 
   constructor(partial: Partial<EvaluationResponseDto>) {

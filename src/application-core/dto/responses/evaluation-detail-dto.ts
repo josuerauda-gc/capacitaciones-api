@@ -1,4 +1,4 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import { ImagesDto } from '../general/images-dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { AreaEntity } from 'src/application-core/domain/entities/area-entity';
@@ -46,7 +46,8 @@ export class EvaluationDetailResponseDto {
   @ApiProperty({ description: 'Comentarios' })
   comments: string;
   @Expose()
-  @ApiProperty({ description: 'Listado de imagenes' })
+  @Type(() => ImagesDto)
+  @ApiProperty({ description: 'Listado de imagenes', type: [ImagesDto] })
   images?: ImagesDto[];
   @Expose()
   @ApiProperty()
