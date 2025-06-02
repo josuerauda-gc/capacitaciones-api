@@ -13,6 +13,12 @@ export class GetLastsEvaluations {
 
   async execute(): Promise<EvaluationResponseDto[]> {
     const evaluations = await this.evaluationRepository.getAllEvaluations();
+    evaluations.forEach((evaluation) => {
+      // Adjust the date to UTC-6
+      evaluation.date = new Date(
+        evaluation.date.getTime() - 6 * 60 * 60 * 1000,
+      );
+    });
     const lastsEvaluationsBranchByDate = evaluations.reduce(
       (acc, evaluation) => {
         const branchName = evaluation.branchName;

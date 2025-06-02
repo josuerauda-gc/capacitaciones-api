@@ -87,6 +87,7 @@ export class CreateEvaluationDetail {
       categoryName: newEvaluationDetail.category.description,
       typeObservationId: newEvaluationDetail.typeObservation.typeObservationId,
       typeObservationName: newEvaluationDetail.typeObservation.description,
+      date: new Date(newEvaluationDetail.date.getTime() - 6 * 60 * 60 * 1000),
       images,
     });
   }

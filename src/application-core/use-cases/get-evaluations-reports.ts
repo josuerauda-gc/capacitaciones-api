@@ -31,6 +31,7 @@ export class GetEvaluationsReports {
         categoryName: evaluationDetail.category.description,
         typeObservationId: evaluationDetail.typeObservation.typeObservationId,
         typeObservationName: evaluationDetail.typeObservation.description,
+        date: new Date(evaluationDetail.date.getTime() - 6 * 60 * 60 * 1000),
       });
     });
   }

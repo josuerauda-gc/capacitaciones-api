@@ -4,6 +4,7 @@ import { EvaluationRepository } from 'src/infraestructure/repositories/evaluatio
 import { CloseEvaluationDto } from '../dto/requests/close-evaluation-dto';
 import { EvaluationResponseDto } from '../dto/responses/evaluation-dto';
 import SecurityService from 'src/infraestructure/services/security/security.service';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class CloseEvaluation {
@@ -24,6 +25,14 @@ export class CloseEvaluation {
       closeEvaluationDto,
       userData.employedUserName,
     );
-    return evaluation;
+    console.log(evaluation);
+    console.log({
+      ...evaluation,
+      date: new Date(evaluation.date.getTime() - 6 * 60 * 60 * 1000),
+    });
+    return plainToInstance(EvaluationResponseDto, {
+      ...evaluation,
+      date: new Date(evaluation.date.getTime() - 6 * 60 * 60 * 1000),
+    });
   }
 }

@@ -58,6 +58,7 @@ export class GetEvaluationDetailById {
       typeObservationId: evaluationDetail.typeObservation.typeObservationId,
       typeObservationName: evaluationDetail.typeObservation.description,
       images: imagesDto,
+      date: new Date(evaluationDetail.date.getTime() - 6 * 60 * 60 * 1000),
     });
   }
 }

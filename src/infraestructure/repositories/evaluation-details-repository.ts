@@ -18,7 +18,7 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
   ) {}
 
   async getAllEvaluationDetails(): Promise<EvaluationDetailEntity[]> {
-    return await this.evaluationDetailRepository.find({
+    const evaluationDetails = await this.evaluationDetailRepository.find({
       relations: {
         evaluation: true,
         area: true,
@@ -27,6 +27,7 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
       },
       order: { evaluationDetailId: 'DESC' },
     });
+    return evaluationDetails;
   }
 
   async getEvaluationDetailById(id: number): Promise<EvaluationDetailEntity> {
@@ -61,7 +62,7 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
         'No tiene permiso para agregar detalles a esta evaluación',
       );
     }
-    return await this.evaluationDetailRepository.save({
+    const newEvaluationDetail = await this.evaluationDetailRepository.save({
       evaluation: { evaluationId: evaluationExists.evaluationId },
       category: { nKey: evaluationDetail.categoryId },
       area: { nKey: evaluationDetail.areaId },
@@ -70,6 +71,7 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
       },
       comments: evaluationDetail.comments,
     });
+    return newEvaluationDetail;
   }
 
   async updateEvaluationDetail(
@@ -102,7 +104,10 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
     if (!existingEvaluationDetail.evaluation.isOpen) {
       throw new ValidationException('La evaluación no se encuentra abierta');
     }
-    return await this.evaluationDetailRepository.save(updatedEvaluationDetail);
+    const evaluationDetailUpdated = await this.evaluationDetailRepository.save(
+      updatedEvaluationDetail,
+    );
+    return evaluationDetailUpdated;
   }
 
   async deleteEvaluationDetail(id: number, username: string): Promise<string> {
@@ -128,7 +133,7 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
   async getAllEvaluationDetailsByReferenceCode(
     referenceCode: string,
   ): Promise<EvaluationDetailEntity[]> {
-    return await this.evaluationDetailRepository.find({
+    const evaluations = await this.evaluationDetailRepository.find({
       relations: {
         evaluation: true,
         area: true,
@@ -137,5 +142,6 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
       },
       where: { evaluation: { referenceCode } },
     });
+    return evaluations;
   }
 }

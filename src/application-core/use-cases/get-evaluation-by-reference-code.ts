@@ -69,14 +69,16 @@ export class GetEvaluationByReferenceCode {
           typeObservationId: evaluationDetail.typeObservation.typeObservationId,
           typeObservationName: evaluationDetail.typeObservation.description,
           images: imagesDto,
+          date: new Date(evaluationDetail.date.getTime() - 6 * 60 * 60 * 1000),
         });
       }),
     );
     const evaluationDto = plainToInstance(EvaluationResponseDto, {
       ...evaluation,
       evaluationDetails: evaluationDetailsDto,
+      date: new Date(evaluation.date.getTime() - 6 * 60 * 60 * 1000),
     });
-    console.log(evaluationDto);
+    // console.log(evaluationDto);
     return evaluationDto;
   }
 }

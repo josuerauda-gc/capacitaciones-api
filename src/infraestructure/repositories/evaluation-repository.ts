@@ -17,15 +17,20 @@ export class EvaluationRepository implements IEvaluation {
   ) {}
 
   async getAllEvaluations(): Promise<EvaluationEntity[]> {
-    return await this.evaluationRepository.find({
+    const evaluations = await this.evaluationRepository.find({
       order: { date: 'DESC' },
     });
+    return evaluations;
   }
 
   async getEvaluationById(evaluationId: number): Promise<EvaluationEntity> {
-    return await this.evaluationRepository.findOne({
+    const evaluation = await this.evaluationRepository.findOne({
       where: { evaluationId: evaluationId },
     });
+    if (!evaluation) {
+      throw new NotFoundException('Evaluación no encontrada');
+    }
+    return evaluation;
   }
 
   async getEvaluationByReferenceCode(
@@ -58,8 +63,8 @@ export class EvaluationRepository implements IEvaluation {
     }
     const newEvaluation: EvaluationEntity = {
       evaluationId: null,
-      referenceCode,
       date: new Date(),
+      referenceCode,
       isOpen: true,
       username,
       ...evaluation,

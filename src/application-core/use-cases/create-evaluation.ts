@@ -30,10 +30,10 @@ export class CreateEvaluation {
     if (!evaluation) {
       return null;
     }
-    const evaluationDtoResponse = plainToInstance(
-      EvaluationResponseDto,
-      evaluation,
-    );
+    const evaluationDtoResponse = plainToInstance(EvaluationResponseDto, {
+      ...evaluation,
+      date: new Date(evaluation.date.getTime() - 6 * 60 * 60 * 1000),
+    });
     return evaluationDtoResponse;
   }
 }
