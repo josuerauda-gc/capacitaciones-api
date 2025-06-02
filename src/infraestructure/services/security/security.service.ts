@@ -9,7 +9,7 @@ import EmployedRequest from 'src/application-core/wrapper/employed-request';
 
 @Injectable()
 export default class SecurityService implements ISecurity {
-  constructor(private readonly consulService: ConsulService) {}
+  constructor(private readonly consulService: ConsulService) { }
 
   async GetUserData(token: string) {
     try {
@@ -20,8 +20,8 @@ export default class SecurityService implements ISecurity {
         ? process.env.APP_HOST || 'localhost'
         : security.host;
       const port = process.env.DEV ? 88 : security.port;
-      // const url = `http://${host}:${port}/user/data`;
-      const url = `http://localhost:${port}/user/data`;
+      const url = `http://${host}:${port}/user/data`;
+      // const url = `http://localhost:${port}/user/data`;
       const response = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
