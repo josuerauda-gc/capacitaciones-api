@@ -32,9 +32,10 @@ export class CreateEvaluationDetail {
     token: string,
   ): Promise<any> {
     const userData = await this.securityService.GetUserData(token);
-    const evaluationExists = await this.evaluationRepository.getEvaluationById(
-      evaluationDetailDto.evaluationId,
-    );
+    const evaluationExists =
+      await this.evaluationRepository.getEvaluationByReferenceCode(
+        evaluationDetailDto.evaluationReferenceCode,
+      );
     if (!evaluationExists) {
       throw new ValidationException(
         'La evaluación no existe, por favor verifique el ID de la evaluación',

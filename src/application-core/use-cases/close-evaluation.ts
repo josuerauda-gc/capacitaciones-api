@@ -14,13 +14,13 @@ export class CloseEvaluation {
   ) {}
 
   async execute(
-    evaluationId: number,
+    referenceCode: string,
     closeEvaluationDto: CloseEvaluationDto,
     token: string,
   ): Promise<EvaluationResponseDto> {
     const userData = await this.securityService.GetUserData(token);
     const evaluation = await this.evaluationRepository.closeEvaluation(
-      evaluationId,
+      referenceCode,
       closeEvaluationDto,
       userData.employedUserName,
     );

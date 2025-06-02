@@ -14,8 +14,8 @@ export default interface IEvaluationDetail {
     username: string,
   ): Promise<EvaluationDetailEntity>;
   deleteEvaluationDetail(id: number, username: string): Promise<string>;
-  getAllEvaluationDetailsByEvaluationId(
-    evaluationId: number,
+  getAllEvaluationDetailsByReferenceCode(
+    referenceCode: string,
   ): Promise<EvaluationDetailEntity[]>;
   // getAllEvaluationDetailsByObservationId(
   //   observationId: number,

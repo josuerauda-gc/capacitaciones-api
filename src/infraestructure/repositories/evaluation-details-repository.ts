@@ -46,7 +46,7 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
     username: string,
   ): Promise<EvaluationDetailEntity> {
     const evaluationExists = await this.evaluationRepository.findOne({
-      where: { evaluationId: evaluationDetail.evaluationId },
+      where: { referenceCode: evaluationDetail.evaluationReferenceCode },
     });
     if (!evaluationExists) {
       throw new NotFoundException(
@@ -62,7 +62,7 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
       );
     }
     return await this.evaluationDetailRepository.save({
-      evaluation: { evaluationId: evaluationDetail.evaluationId },
+      evaluation: { evaluationId: evaluationExists.evaluationId },
       category: { nKey: evaluationDetail.categoryId },
       area: { nKey: evaluationDetail.areaId },
       typeObservation: {
@@ -125,8 +125,8 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
     return 'Detalle de evaluación eliminado correctamente';
   }
 
-  async getAllEvaluationDetailsByEvaluationId(
-    evaluationId: number,
+  async getAllEvaluationDetailsByReferenceCode(
+    referenceCode: string,
   ): Promise<EvaluationDetailEntity[]> {
     return await this.evaluationDetailRepository.find({
       relations: {
@@ -135,7 +135,7 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
         category: true,
         typeObservation: true,
       },
-      where: { evaluation: { evaluationId: evaluationId } },
+      where: { evaluation: { referenceCode } },
     });
   }
 }

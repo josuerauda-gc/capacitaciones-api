@@ -8,7 +8,7 @@ import { ValidationException } from 'src/application-core/exception/validation-e
 import { CloseEvaluation } from 'src/application-core/use-cases/close-evaluation';
 import { CreateEvaluation } from 'src/application-core/use-cases/create-evaluation';
 import { GetAllEvaluations } from 'src/application-core/use-cases/get-all-evaluations';
-import { GetEvaluationById } from 'src/application-core/use-cases/get-evaluation-by-id';
+import { GetEvaluationByReferenceCode } from 'src/application-core/use-cases/get-evaluation-by-reference-code';
 import { GetEvaluationsReports } from 'src/application-core/use-cases/get-evaluations-reports';
 import { GetLastsEvaluations } from 'src/application-core/use-cases/get-lasts-evaluations';
 
@@ -16,7 +16,7 @@ import { GetLastsEvaluations } from 'src/application-core/use-cases/get-lasts-ev
 export class EvaluationController {
   constructor(
     private readonly getAllEvaluationsUseCase: GetAllEvaluations,
-    private readonly getEvaluationById: GetEvaluationById,
+    private readonly getEvaluationByReferenceCode: GetEvaluationByReferenceCode,
     private readonly createEvaluation: CreateEvaluation,
     private readonly closeEvaluation: CloseEvaluation,
     private readonly getEvaluationsReports: GetEvaluationsReports,
@@ -53,14 +53,16 @@ export class EvaluationController {
     return await this.getEvaluationsReports.execute();
   }
 
-  @Get(':evaluationId')
+  @Get(':referenceCode')
   @ApiResponse({
     status: 200,
-    description: 'Obtener evaluación por ID',
+    description: 'Obtener evaluación por código de referencia',
     type: EvaluationResponseDto,
   })
-  async getEvaluationByIdHandler(@Param('evaluationId') evaluationId: number) {
-    return await this.getEvaluationById.execute(evaluationId);
+  async getEvaluationByIdHandler(
+    @Param('referenceCode') referenceCode: string,
+  ) {
+    return await this.getEvaluationByReferenceCode.execute(referenceCode);
   }
 
   @Post()
@@ -80,7 +82,7 @@ export class EvaluationController {
     return await this.createEvaluation.execute(evaluationDto, token);
   }
 
-  @Post('close/:evaluationId')
+  @Post('close/:referenceCode')
   @ApiResponse({
     status: 200,
     description: 'Evaluación cerrada exitosamente',
@@ -88,7 +90,7 @@ export class EvaluationController {
   })
   async closeEvaluationHandler(
     @Headers('authorization') authorization: string,
-    @Param('evaluationId') evaluationId: number,
+    @Param('referenceCode') referenceCode: string,
     @Body() closeEvaluationDto: CloseEvaluationDto,
   ) {
     if (!authorization) {
@@ -96,7 +98,7 @@ export class EvaluationController {
     }
     const token = authorization.split(' ')[1];
     return await this.closeEvaluation.execute(
-      evaluationId,
+      referenceCode,
       closeEvaluationDto,
       token,
     );

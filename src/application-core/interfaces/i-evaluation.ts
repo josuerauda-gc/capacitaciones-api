@@ -4,17 +4,20 @@ import { EvaluationRequestDto } from '../dto/requests/evaluation-dto';
 
 export default interface IEvaluation {
   getAllEvaluations(): Promise<EvaluationEntity[]>;
-  getEvaluationById(id: number): Promise<EvaluationEntity>;
+  getEvaluationById(evaluationId: number): Promise<EvaluationEntity>;
+  getEvaluationByReferenceCode(
+    referenceCode: string,
+  ): Promise<EvaluationEntity>;
   saveEvaluation(
     evaluation: EvaluationRequestDto,
     username: string,
   ): Promise<EvaluationEntity>;
   updateEvaluation(
-    id: number,
+    referenceCode: string,
     evaluation: EvaluationRequestDto,
   ): Promise<EvaluationEntity>;
   closeEvaluation(
-    id: number,
+    referenceCode: string,
     closeEvaluationDto: CloseEvaluationDto,
     username: string,
   ): Promise<EvaluationEntity>;

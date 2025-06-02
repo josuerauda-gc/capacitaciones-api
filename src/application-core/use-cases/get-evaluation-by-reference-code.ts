@@ -14,7 +14,7 @@ import { WebdavService } from 'src/infraestructure/services/webdav/webdav.servic
 import { EvaluationImageRepository } from 'src/infraestructure/repositories/evaluation-image-repository';
 
 @Injectable()
-export class GetEvaluationById {
+export class GetEvaluationByReferenceCode {
   constructor(
     @Inject(EVALUATION_SERVICE)
     private readonly evaluationRepository: EvaluationRepository,
@@ -25,12 +25,14 @@ export class GetEvaluationById {
     private readonly webdavService: WebdavService,
   ) {}
 
-  async execute(evaluationId: number): Promise<EvaluationResponseDto> {
+  async execute(referenceCode: string): Promise<EvaluationResponseDto> {
     const evaluation =
-      await this.evaluationRepository.getEvaluationById(evaluationId);
+      await this.evaluationRepository.getEvaluationByReferenceCode(
+        referenceCode,
+      );
     const evaluationDetails =
-      await this.evaluationDetailRepository.getAllEvaluationDetailsByEvaluationId(
-        evaluationId,
+      await this.evaluationDetailRepository.getAllEvaluationDetailsByReferenceCode(
+        referenceCode,
       );
     if (!evaluation) {
       throw new NotFoundException('Evaluación no encontrada');

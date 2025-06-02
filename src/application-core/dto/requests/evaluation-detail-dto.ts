@@ -3,9 +3,11 @@ import { ImagesDto } from '../general/images-dto';
 import { IsArray, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class EvaluationDetailRequestDto {
-  @IsNotEmpty({ message: 'ID de detalle de evaluación no debe ser vacío' })
-  @ApiProperty({ description: 'ID de evaluación' })
-  evaluationId: number;
+  @IsNotEmpty({
+    message: 'Código de referencia de evaluación no debe ser vacío',
+  })
+  @ApiProperty({ description: 'Código de referencia de evaluación' })
+  evaluationReferenceCode: string;
   @IsNotEmpty({ message: 'ID de área no debe ser vacío' })
   @ApiProperty({ description: 'ID de área' })
   areaId: number;

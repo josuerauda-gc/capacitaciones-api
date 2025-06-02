@@ -22,10 +22,22 @@ export class EvaluationRepository implements IEvaluation {
     });
   }
 
-  async getEvaluationById(id: number): Promise<EvaluationEntity> {
+  async getEvaluationById(evaluationId: number): Promise<EvaluationEntity> {
     return await this.evaluationRepository.findOne({
-      where: { evaluationId: id },
+      where: { evaluationId: evaluationId },
     });
+  }
+
+  async getEvaluationByReferenceCode(
+    referenceCode: string,
+  ): Promise<EvaluationEntity> {
+    const evaluation = await this.evaluationRepository.findOne({
+      where: { referenceCode: referenceCode },
+    });
+    if (!evaluation) {
+      throw new NotFoundException('Evaluación no encontrada');
+    }
+    return evaluation;
   }
 
   async saveEvaluation(
@@ -57,11 +69,11 @@ export class EvaluationRepository implements IEvaluation {
   }
 
   async updateEvaluation(
-    id: number,
+    referenceCode: string,
     evaluation: EvaluationRequestDto,
   ): Promise<EvaluationEntity> {
     const existingEvaluation = await this.evaluationRepository.findOne({
-      where: { evaluationId: id },
+      where: { referenceCode },
     });
     if (!existingEvaluation) {
       throw new NotFoundException('Evaluación no encontrada');
@@ -74,12 +86,12 @@ export class EvaluationRepository implements IEvaluation {
   }
 
   async closeEvaluation(
-    id: number,
+    referenceCode: string,
     evaluationClose: CloseEvaluationDto,
     username: string,
   ): Promise<EvaluationEntity> {
     const existingEvaluation = await this.evaluationRepository.findOne({
-      where: { evaluationId: id },
+      where: { referenceCode },
     });
     if (!existingEvaluation) {
       throw new NotFoundException('Evaluación no encontrada');
