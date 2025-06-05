@@ -11,6 +11,7 @@ import { plainToInstance } from 'class-transformer';
 import { EvaluationImageRepository } from 'src/infraestructure/repositories/evaluation-image-repository';
 import SecurityService from 'src/infraestructure/services/security/security.service';
 import { WebdavService } from 'src/infraestructure/services/webdav/webdav.service';
+import { ValidationException } from '../exception/validation-exception';
 
 @Injectable()
 export class UpdateEvaluationDetail {
@@ -21,7 +22,7 @@ export class UpdateEvaluationDetail {
     private readonly evaluationImageRepository: EvaluationImageRepository,
     private readonly securityService: SecurityService,
     private readonly webdavService: WebdavService,
-  ) {}
+  ) { }
 
   async execute(
     evaluationDetailId: number,
@@ -46,6 +47,11 @@ export class UpdateEvaluationDetail {
     if (evaluationDetailDto.images) {
       if (evaluationDetailDto.images.length > 0) {
         evaluationDetailDto.images.forEach(async (image) => {
+          if (!(image.blobFile instanceof Blob)) {
+            throw new ValidationException(
+              'El archivo de imagen debe ser un Blob',
+            );
+          }
           // Guardar la imagen si no existe
           const existingImage = evaluationDetailImages.find(
             (img) => img.nKey === image.idImg,

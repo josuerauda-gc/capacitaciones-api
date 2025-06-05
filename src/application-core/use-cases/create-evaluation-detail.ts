@@ -25,7 +25,7 @@ export class CreateEvaluationDetail {
     private readonly evaluationImageRepository: EvaluationImageRepository,
     private readonly securityService: SecurityService,
     private readonly webdavService: WebdavService,
-  ) {}
+  ) { }
 
   async execute(
     evaluationDetailDto: EvaluationDetailRequestDto,
@@ -53,6 +53,11 @@ export class CreateEvaluationDetail {
     if (evaluationDetailDto.images) {
       if (evaluationDetailDto.images.length > 0) {
         evaluationDetailDto.images.forEach(async (image) => {
+          if (!(image.blobFile instanceof Blob)) {
+            throw new ValidationException(
+              'El archivo de imagen debe ser un Blob',
+            );
+          }
           await this.webdavService.saveImage(
             evaluationDetail.evaluation.referenceCode,
             image,
