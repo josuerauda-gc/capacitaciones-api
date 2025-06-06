@@ -14,7 +14,7 @@ export class EvaluationRepository implements IEvaluation {
   constructor(
     @InjectRepository(EvaluationEntity)
     private readonly evaluationRepository: Repository<EvaluationEntity>,
-  ) {}
+  ) { }
 
   async getAllEvaluations(): Promise<EvaluationEntity[]> {
     const evaluations = await this.evaluationRepository.find({
@@ -59,6 +59,14 @@ export class EvaluationRepository implements IEvaluation {
     if (existingEvaluation) {
       throw new ValidationException(
         'Ya existe una evaluación activa para esta sucursal',
+      );
+    }
+    const userHasAnOpenEvaluation = await this.evaluationRepository.findOne({
+      where: { username: username, isOpen: true },
+    });
+    if (userHasAnOpenEvaluation) {
+      throw new ValidationException(
+        'Ya tienes una evaluación abierta, por favor cierra la evaluación actual antes de crear una nueva.',
       );
     }
     const newEvaluation: EvaluationEntity = {
