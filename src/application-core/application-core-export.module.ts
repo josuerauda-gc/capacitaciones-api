@@ -14,6 +14,7 @@ import { DeleteEvaluationDetail } from './use-cases/delete-evaluation-detail';
 import { GetEvaluationsReports } from './use-cases/get-evaluations-reports';
 import { GetLastsEvaluations } from './use-cases/get-lasts-evaluations';
 import { GetEvaluationByReferenceCode } from './use-cases/get-evaluation-by-reference-code';
+import { GetAllEvaluationsByUsername } from './use-cases/get-all-evaluations-by-username';
 
 @Module({
   imports: [DatabaseContextModule, InfraestructureExportModule],
@@ -22,6 +23,7 @@ import { GetEvaluationByReferenceCode } from './use-cases/get-evaluation-by-refe
     GetAllCategories,
     GetAllTypesObservations,
     GetAllEvaluations,
+    GetAllEvaluationsByUsername,
     GetEvaluationByReferenceCode,
     CreateEvaluation,
     CloseEvaluation,
@@ -37,6 +39,7 @@ import { GetEvaluationByReferenceCode } from './use-cases/get-evaluation-by-refe
     GetAllCategories,
     GetAllTypesObservations,
     GetAllEvaluations,
+    GetAllEvaluationsByUsername,
     GetEvaluationByReferenceCode,
     CreateEvaluation,
     CloseEvaluation,

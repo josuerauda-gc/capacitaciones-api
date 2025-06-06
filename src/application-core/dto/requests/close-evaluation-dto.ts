@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { EvaluationRequestDto } from './evaluation-dto';
 
 export class CloseEvaluationDto {
@@ -8,7 +8,7 @@ export class CloseEvaluationDto {
   @ApiProperty({ description: 'Nombre de gerente de turno' })
   managerName: string;
 
-  @IsNotEmpty({ message: 'comments es requerido.' })
+  @IsOptional()
   @IsString({ message: 'comments debe ser un string.' })
   @ApiProperty({ description: 'Comentarios' })
   comments: string;

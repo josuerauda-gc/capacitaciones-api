@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Headers, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Headers,
+  HttpCode,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { CloseEvaluationDto } from 'src/application-core/dto/requests/close-evaluation-dto';
 import { EvaluationRequestDto } from 'src/application-core/dto/requests/evaluation-dto';
@@ -8,6 +16,7 @@ import { ValidationException } from 'src/application-core/exception/validation-e
 import { CloseEvaluation } from 'src/application-core/use-cases/close-evaluation';
 import { CreateEvaluation } from 'src/application-core/use-cases/create-evaluation';
 import { GetAllEvaluations } from 'src/application-core/use-cases/get-all-evaluations';
+import { GetAllEvaluationsByUsername } from 'src/application-core/use-cases/get-all-evaluations-by-username';
 import { GetEvaluationByReferenceCode } from 'src/application-core/use-cases/get-evaluation-by-reference-code';
 import { GetEvaluationsReports } from 'src/application-core/use-cases/get-evaluations-reports';
 import { GetLastsEvaluations } from 'src/application-core/use-cases/get-lasts-evaluations';
@@ -21,6 +30,7 @@ export class EvaluationController {
     private readonly closeEvaluation: CloseEvaluation,
     private readonly getEvaluationsReports: GetEvaluationsReports,
     private readonly getLastEvaluationsBranch: GetLastsEvaluations,
+    private readonly getAllEvaluationsByUsername: GetAllEvaluationsByUsername,
   ) {}
 
   @Get()
@@ -41,6 +51,22 @@ export class EvaluationController {
   })
   async getLastsEvaluations() {
     return await this.getLastEvaluationsBranch.execute();
+  }
+
+  @Get('/by-user')
+  @ApiResponse({
+    status: 200,
+    description: 'Obtener evaluaciones por nombre de usuario',
+    type: EvaluationResponseDto,
+  })
+  async getEvaluationsByUsername(
+    @Headers('authorization') authorization: string,
+  ) {
+    if (!authorization) {
+      throw new ValidationException('Token es requerido en la petición');
+    }
+    const token = authorization.split(' ')[1];
+    return await this.getAllEvaluationsByUsername.execute(token);
   }
 
   @Get('reports')
@@ -83,6 +109,7 @@ export class EvaluationController {
   }
 
   @Post('close/:referenceCode')
+  @HttpCode(200)
   @ApiResponse({
     status: 200,
     description: 'Evaluación cerrada exitosamente',

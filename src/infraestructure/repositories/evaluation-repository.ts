@@ -14,7 +14,7 @@ export class EvaluationRepository implements IEvaluation {
   constructor(
     @InjectRepository(EvaluationEntity)
     private readonly evaluationRepository: Repository<EvaluationEntity>,
-  ) { }
+  ) {}
 
   async getAllEvaluations(): Promise<EvaluationEntity[]> {
     const evaluations = await this.evaluationRepository.find({
@@ -43,6 +43,16 @@ export class EvaluationRepository implements IEvaluation {
       throw new NotFoundException('Evaluación no encontrada');
     }
     return evaluation;
+  }
+
+  async getEvaluationsByUsername(
+    username: string,
+  ): Promise<EvaluationEntity[]> {
+    const evaluations = await this.evaluationRepository.find({
+      where: { username: username },
+      order: { date: 'DESC' },
+    });
+    return evaluations;
   }
 
   async saveEvaluation(

@@ -5,6 +5,7 @@ import { EvaluationRequestDto } from '../dto/requests/evaluation-dto';
 export default interface IEvaluation {
   getAllEvaluations(): Promise<EvaluationEntity[]>;
   getEvaluationById(evaluationId: number): Promise<EvaluationEntity>;
+  getEvaluationsByUsername(username: string): Promise<EvaluationEntity[]>;
   getEvaluationByReferenceCode(
     referenceCode: string,
   ): Promise<EvaluationEntity>;
