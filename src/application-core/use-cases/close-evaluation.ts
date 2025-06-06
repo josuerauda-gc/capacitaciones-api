@@ -25,11 +25,6 @@ export class CloseEvaluation {
       closeEvaluationDto,
       userData.employedUserName,
     );
-    console.log(evaluation);
-    console.log({
-      ...evaluation,
-      date: new Date(evaluation.date.getTime() - 6 * 60 * 60 * 1000),
-    });
     return plainToInstance(EvaluationResponseDto, {
       ...evaluation,
       date: new Date(evaluation.date.getTime() - 6 * 60 * 60 * 1000),

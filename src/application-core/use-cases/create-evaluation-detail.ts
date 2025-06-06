@@ -25,7 +25,7 @@ export class CreateEvaluationDetail {
     private readonly evaluationImageRepository: EvaluationImageRepository,
     private readonly securityService: SecurityService,
     private readonly webdavService: WebdavService,
-  ) { }
+  ) {}
 
   async execute(
     evaluationDetailDto: EvaluationDetailRequestDto,
@@ -52,14 +52,9 @@ export class CreateEvaluationDetail {
     const images = [];
     if (evaluationDetailDto.images) {
       if (evaluationDetailDto.images.length > 0) {
-        evaluationDetailDto.images.forEach(async (image) => {
-          if (!(image.blobFile instanceof Blob)) {
-            throw new ValidationException(
-              'El archivo de imagen debe ser un Blob',
-            );
-          }
+        for (const image of evaluationDetailDto.images) {
           await this.webdavService.saveImage(
-            evaluationDetail.evaluation.referenceCode,
+            evaluationDetailDto.evaluationReferenceCode,
             image,
           );
           const newImage =
@@ -70,12 +65,12 @@ export class CreateEvaluationDetail {
           images.push({
             nKey: newImage.nKey,
             name: newImage.imgPath,
-            blobFile: await this.webdavService.getImage(
-              evaluationDetail.evaluation.referenceCode,
+            base64: await this.webdavService.getImage(
+              evaluationDetailDto.evaluationReferenceCode,
               newImage.imgPath,
             ),
           });
-        });
+        }
       }
     }
     const newEvaluationDetail =

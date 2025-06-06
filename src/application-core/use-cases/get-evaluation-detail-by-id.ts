@@ -41,7 +41,7 @@ export class GetEvaluationDetailById {
       images.map(async (image) => ({
         nKey: image.nKey,
         name: image.imgPath,
-        blobFile: await this.webdavService.getImage(
+        base64: await this.webdavService.getImage(
           evaluationDetail.evaluation.referenceCode,
           image.imgPath,
         ),

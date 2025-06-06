@@ -31,7 +31,7 @@ export class EvaluationImageRepository implements IEvaluationImage {
       nKey: null,
       imgPath: evaluationImage.name,
       evaluationDetail,
-      date: null,
+      date: new Date(),
     };
     return await this.evaluationImageRepository.save(newEvaluationImage);
   }

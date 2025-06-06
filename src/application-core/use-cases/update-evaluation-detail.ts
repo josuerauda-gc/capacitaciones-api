@@ -22,7 +22,7 @@ export class UpdateEvaluationDetail {
     private readonly evaluationImageRepository: EvaluationImageRepository,
     private readonly securityService: SecurityService,
     private readonly webdavService: WebdavService,
-  ) { }
+  ) {}
 
   async execute(
     evaluationDetailId: number,
@@ -46,12 +46,7 @@ export class UpdateEvaluationDetail {
       );
     if (evaluationDetailDto.images) {
       if (evaluationDetailDto.images.length > 0) {
-        evaluationDetailDto.images.forEach(async (image) => {
-          if (!(image.blobFile instanceof Blob)) {
-            throw new ValidationException(
-              'El archivo de imagen debe ser un Blob',
-            );
-          }
+        for (const image of evaluationDetailDto.images) {
           // Guardar la imagen si no existe
           const existingImage = evaluationDetailImages.find(
             (img) => img.nKey === image.idImg,
@@ -60,15 +55,15 @@ export class UpdateEvaluationDetail {
             images.push({
               nKey: existingImage.nKey,
               name: existingImage.imgPath,
-              blobFile: await this.webdavService.getImage(
-                evaluationDetail.evaluation.referenceCode,
+              base64: await this.webdavService.getImage(
+                evaluationDetailDto.evaluationReferenceCode,
                 existingImage.imgPath,
               ),
             });
           }
           if (!existingImage) {
             await this.webdavService.saveImage(
-              evaluationDetail.evaluation.referenceCode,
+              evaluationDetailDto.evaluationReferenceCode,
               image,
             );
             const newImage =
@@ -79,8 +74,8 @@ export class UpdateEvaluationDetail {
             images.push({
               nKey: newImage.nKey,
               name: newImage.imgPath,
-              blobFile: await this.webdavService.getImage(
-                evaluationDetail.evaluation.referenceCode,
+              base64: await this.webdavService.getImage(
+                evaluationDetailDto.evaluationReferenceCode,
                 newImage.imgPath,
               ),
             });
@@ -91,14 +86,14 @@ export class UpdateEvaluationDetail {
           );
           if (imageToDelete) {
             await this.webdavService.deleteImage(
-              evaluationDetail.evaluation.referenceCode,
+              evaluationDetailDto.evaluationReferenceCode,
               imageToDelete.imgPath,
             );
             await this.evaluationImageRepository.deleteEvaluationImage(
               imageToDelete.nKey,
             );
           }
-        });
+        }
       }
     }
 
@@ -113,6 +108,7 @@ export class UpdateEvaluationDetail {
       typeObservationId: evaluationDetail.typeObservation.typeObservationId,
       typeObservationName: evaluationDetail.typeObservation.description,
       date: new Date(evaluationDetail.date.getTime() - 6 * 60 * 60 * 1000),
+      images,
     });
   }
 }

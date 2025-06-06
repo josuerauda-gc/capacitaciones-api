@@ -33,7 +33,7 @@ export class WebdavService {
       await this.saveImage('test', {
         idImg: 0,
         name: 'mip.jpg',
-        blobFile: new Blob([imgTest]),
+        base64: Buffer.from(imgTest).toString('base64'),
       });
       const imageSaved = await this.getImage('test', 'mip.jpg');
       console.log('Imagen guardada y obtenida correctamente:', imageSaved);
@@ -47,11 +47,6 @@ export class WebdavService {
   }
 
   async saveImage(evaluationCode: string, image: ImagesDto): Promise<boolean> {
-    if (image.blobFile instanceof Blob === false) {
-      throw new ValidationException(
-        'El archivo de imagen debe ser una instancia de Blob.',
-      );
-    }
     const initialPath = `${process.env.WEBDAV_PATH || '/'}`;
     const existsFolder = await this.webdavClient.exists(
       `${initialPath}${evaluationCode}`,
@@ -68,9 +63,13 @@ export class WebdavService {
       );
     }
     const path = `${initialPath}${evaluationCode}/${image.name}`;
+    const cleanBase64 = image.base64.replace(
+      /^data:(image|application)\/[a-zA-Z0-9+.-]+;base64,/,
+      '',
+    );
     return await this.webdavClient.putFileContents(
       path,
-      await image.blobFile.arrayBuffer(),
+      await Buffer.from(cleanBase64, 'base64'),
       {
         overwrite: true,
         headers: {
@@ -80,7 +79,7 @@ export class WebdavService {
     );
   }
 
-  async getImage(evaluationCode: string, imageName: string): Promise<Blob> {
+  async getImage(evaluationCode: string, imageName: string): Promise<string> {
     const path = `${process.env.WEBDAV_PATH || '/'}${evaluationCode}/${imageName}`;
     const fileContents = (await this.webdavClient.getFileContents(path, {
       format: 'binary',
@@ -98,9 +97,7 @@ export class WebdavService {
         `El tipo de imagen ${typeImage} no es válido. Solo se permiten jpg, jpeg y png.`,
       );
     }
-    return new Blob([arrayBuffer], {
-      type: `image/${typeImage.toLowerCase()}`,
-    });
+    return `data:image/${typeImage.toLowerCase()};base64,${Buffer.from(arrayBuffer).toString('base64')}`;
   }
 
   async deleteImage(evaluationCode: string, imageName: string): Promise<void> {
