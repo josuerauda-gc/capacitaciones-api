@@ -53,22 +53,6 @@ export class EvaluationController {
     return await this.getLastEvaluationsBranch.execute();
   }
 
-  @Get('/by-user')
-  @ApiResponse({
-    status: 200,
-    description: 'Obtener evaluaciones por nombre de usuario',
-    type: EvaluationResponseDto,
-  })
-  async getEvaluationsByUsername(
-    @Headers('authorization') authorization: string,
-  ) {
-    if (!authorization) {
-      throw new ValidationException('Token es requerido en la petición');
-    }
-    const token = authorization.split(' ')[1];
-    return await this.getAllEvaluationsByUsername.execute(token);
-  }
-
   @Get('reports')
   @ApiResponse({
     status: 200,
@@ -89,6 +73,23 @@ export class EvaluationController {
     @Param('referenceCode') referenceCode: string,
   ) {
     return await this.getEvaluationByReferenceCode.execute(referenceCode);
+  }
+
+  @Get('/user/:username')
+  @ApiResponse({
+    status: 200,
+    description: 'Obtener evaluaciones por nombre de usuario',
+    type: EvaluationResponseDto,
+  })
+  async getEvaluationsByUsername(
+    @Param('username') username: string,
+    // @Headers('authorization') authorization: string,
+  ) {
+    // if (!authorization) {
+    //   throw new ValidationException('Token es requerido en la petición');
+    // }
+    // const token = authorization.split(' ')[1];
+    return await this.getAllEvaluationsByUsername.execute(username);
   }
 
   @Post()
