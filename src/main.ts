@@ -23,7 +23,7 @@ async function bootstrap() {
         // Personaliza el mensaje de error
         console.log('===================');
         const detailedErrors = errors?.map((error) => {
-          if (error.children) console.log(error.children);
+          if (error.children) console.log(JSON.stringify(error.children));
           return (
             error.constraints || [
               `${error.property} tiene un campo no válido o no existe.`,

@@ -81,6 +81,10 @@ export class WebdavService {
 
   async getImage(evaluationCode: string, imageName: string): Promise<string> {
     const path = `${process.env.WEBDAV_PATH || '/'}${evaluationCode}/${imageName}`;
+    const exists = await this.webdavClient.exists(path);
+    if (!exists) {
+      throw new NotFoundException(`No se encontró la imagen: ${imageName}`);
+    }
     const fileContents = (await this.webdavClient.getFileContents(path, {
       format: 'binary',
     })) as Buffer;

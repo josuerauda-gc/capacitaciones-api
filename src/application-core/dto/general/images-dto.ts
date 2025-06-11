@@ -6,7 +6,7 @@ export class ImagesDto {
   @Expose({ name: 'nKey' })
   @IsOptional()
   @ApiProperty({ description: 'ID de imagen' })
-  idImg: number;
+  idImg?: number;
   @Expose()
   @IsNotEmpty({ message: 'name es requerido' })
   @IsString({ message: 'name debe ser un string' })
@@ -14,8 +14,9 @@ export class ImagesDto {
   name: string;
   @Expose()
   @IsNotEmpty({ message: 'base64 es requerido' })
-  @IsBase64({}, { message: 'base64 debe ser una cadena Base64 válida' })
-  @ApiProperty({ description: 'Base64 de imagen' })
+  @IsString({ message: 'base64 debe ser un string.' })
+  @IsBase64({}, { message: 'base64 debe ser una cadena Base64 válida.' })
+  @ApiProperty({ description: 'Base64 de imagen', type: String })
   base64: string;
 
   constructor(partial: Partial<ImagesDto>) {

@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ImagesDto } from '../general/images-dto';
-import { IsArray, IsNotEmpty, IsOptional } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class EvaluationDetailRequestDto {
   @IsNotEmpty({
@@ -22,6 +28,8 @@ export class EvaluationDetailRequestDto {
   comments: string;
   @IsOptional()
   @IsArray({ message: 'images debe ser un arreglo.' })
+  @ValidateNested({ each: true })
+  @Type(() => ImagesDto)
   @ApiProperty({ description: 'Listado de imagenes', type: [ImagesDto] })
   images?: ImagesDto[];
 

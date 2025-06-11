@@ -11,7 +11,6 @@ import { plainToInstance } from 'class-transformer';
 import { EvaluationImageRepository } from 'src/infraestructure/repositories/evaluation-image-repository';
 import SecurityService from 'src/infraestructure/services/security/security.service';
 import { WebdavService } from 'src/infraestructure/services/webdav/webdav.service';
-import { ValidationException } from '../exception/validation-exception';
 
 @Injectable()
 export class UpdateEvaluationDetail {
@@ -49,9 +48,9 @@ export class UpdateEvaluationDetail {
         for (const image of evaluationDetailDto.images) {
           // Guardar la imagen si no existe
           const existingImage = evaluationDetailImages.find(
-            (img) => img.nKey === image.idImg,
+            (img) => img.imgPath === image.name,
           );
-          if (image.idImg && existingImage) {
+          if (existingImage) {
             images.push({
               nKey: existingImage.nKey,
               name: existingImage.imgPath,
@@ -82,7 +81,7 @@ export class UpdateEvaluationDetail {
           }
           // Eliminar la imagen si no está en la lista de imágenes enviadas
           const imageToDelete = evaluationDetailImages.find(
-            (img) => img.nKey !== image.idImg,
+            (img) => img.imgPath !== image.name,
           );
           if (imageToDelete) {
             await this.webdavService.deleteImage(

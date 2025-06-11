@@ -39,9 +39,9 @@ export class EvaluationRepository implements IEvaluation {
     const evaluation = await this.evaluationRepository.findOne({
       where: { referenceCode: referenceCode },
     });
-    if (!evaluation) {
-      throw new NotFoundException('Evaluación no encontrada');
-    }
+    // if (!evaluation) {
+    //   throw new NotFoundException('Evaluación no encontrada');
+    // }
     return evaluation;
   }
 
