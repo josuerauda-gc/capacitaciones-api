@@ -34,13 +34,17 @@ export class DeleteEvaluationDetail {
         evaluationDetailId,
       );
     if (evaluationImages.length > 0) {
-      evaluationImages.forEach(async (image) => {
-        await this.webdavService.deleteImage(
-          evaluationDetail.evaluation.referenceCode,
-          image.imgPath,
-        );
-        await this.evaluationImageRepository.deleteEvaluationImage(image.nKey);
-      });
+      Promise.all(
+        evaluationImages.map(async (image) => {
+          await this.webdavService.deleteImage(
+            evaluationDetail.evaluation.referenceCode,
+            image.imgPath,
+          );
+          await this.evaluationImageRepository.deleteEvaluationImage(
+            image.nKey,
+          );
+        }),
+      );
     }
     return await this.evaluationDetailRepository.deleteEvaluationDetail(
       evaluationDetailId,
