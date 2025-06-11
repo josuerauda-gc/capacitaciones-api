@@ -3,6 +3,7 @@ import { EVALUATION_DETAIL_SERVICE } from 'src/infraestructure/interface-provide
 import { EvaluationDetailsRepository } from 'src/infraestructure/repositories/evaluation-details-repository';
 import { plainToInstance } from 'class-transformer';
 import { EvaluationReportDto } from '../dto/responses/evaluation-report-dto';
+import { IFilters } from '../interfaces/i-filters';
 
 @Injectable()
 export class GetEvaluationsReports {
@@ -11,9 +12,9 @@ export class GetEvaluationsReports {
     private readonly evaluationDetailRepository: EvaluationDetailsRepository,
   ) {}
 
-  async execute(): Promise<EvaluationReportDto[]> {
+  async execute(filters: IFilters): Promise<EvaluationReportDto[]> {
     const evaluationDetails =
-      await this.evaluationDetailRepository.getAllEvaluationDetails();
+      await this.evaluationDetailRepository.getAllEvaluationDetails(filters);
     if (evaluationDetails.length === 0) {
       return [];
     }

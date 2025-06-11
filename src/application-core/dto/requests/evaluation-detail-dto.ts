@@ -27,7 +27,7 @@ export class EvaluationDetailRequestDto {
   @ApiProperty({ description: 'Comentarios' })
   comments: string;
   @IsOptional()
-  @IsArray({ message: 'images debe ser un arreglo.' })
+  @IsArray({ message: 'No se ha seleccionado imagenes correctamente.' })
   @ValidateNested({ each: true })
   @Type(() => ImagesDto)
   @ApiProperty({ description: 'Listado de imagenes', type: [ImagesDto] })

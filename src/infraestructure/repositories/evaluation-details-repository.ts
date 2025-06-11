@@ -6,7 +6,8 @@ import { EvaluationDetailRequestDto } from 'src/application-core/dto/requests/ev
 import { NotFoundException } from 'src/application-core/exception/not-found-exception';
 import { ValidationException } from 'src/application-core/exception/validation-exception';
 import IEvaluationDetail from 'src/application-core/interfaces/i-evaluation-detail';
-import { Repository } from 'typeorm';
+import { IFilters } from 'src/application-core/interfaces/i-filters';
+import { Between, Repository } from 'typeorm';
 
 @Injectable()
 export class EvaluationDetailsRepository implements IEvaluationDetail {
@@ -17,7 +18,43 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
     private readonly evaluationDetailRepository: Repository<EvaluationDetailEntity>,
   ) {}
 
-  async getAllEvaluationDetails(): Promise<EvaluationDetailEntity[]> {
+  async getAllEvaluationDetails(
+    filters?: IFilters,
+  ): Promise<EvaluationDetailEntity[]> {
+    let whereFilter: any = {};
+    if (filters) {
+      if (filters.branch) {
+        whereFilter.evaluation = { branchName: filters.branch };
+      }
+      if (filters.area) {
+        whereFilter = {
+          ...whereFilter,
+          area: { areaId: filters.area },
+        };
+      }
+      if (filters.category) {
+        whereFilter = {
+          ...whereFilter,
+          category: { categoryId: filters.category },
+        };
+      }
+      if (filters.typeObservation) {
+        whereFilter = {
+          ...whereFilter,
+          typeObservation: { typeObservationId: filters.typeObservation },
+        };
+      }
+      if (filters.date) {
+        const date = new Date(filters.date);
+        whereFilter.evaluation = {
+          ...whereFilter.evaluation,
+          date: Between(
+            date, // 00:00:00 del día
+            new Date(date.getTime() + 24 * 60 * 60 * 1000 - 1), // 23:59:59 del mismo día
+          ),
+        };
+      }
+    }
     const evaluationDetails = await this.evaluationDetailRepository.find({
       relations: {
         evaluation: true,
@@ -25,6 +62,7 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
         category: true,
         typeObservation: true,
       },
+      where: whereFilter,
       order: { evaluationDetailId: 'DESC' },
     });
     return evaluationDetails;

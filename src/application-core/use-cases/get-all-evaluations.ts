@@ -11,8 +11,14 @@ export class GetAllEvaluations {
     private readonly evaluationRepository: EvaluationRepository,
   ) {}
 
-  async execute(): Promise<EvaluationResponseDto[]> {
-    const evaluations = await this.evaluationRepository.getAllEvaluations();
+  async execute(
+    from: number = 0,
+    to?: number,
+  ): Promise<EvaluationResponseDto[]> {
+    const evaluations = await this.evaluationRepository.getAllEvaluations(
+      from,
+      to,
+    );
     if (evaluations.length === 0) {
       return [];
     }

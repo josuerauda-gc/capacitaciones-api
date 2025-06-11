@@ -16,10 +16,23 @@ export class EvaluationRepository implements IEvaluation {
     private readonly evaluationRepository: Repository<EvaluationEntity>,
   ) {}
 
-  async getAllEvaluations(): Promise<EvaluationEntity[]> {
-    const evaluations = await this.evaluationRepository.find({
-      order: { date: 'DESC' },
-    });
+  async getAllEvaluations(
+    from: number = 0,
+    to?: number,
+  ): Promise<EvaluationEntity[]> {
+    let evaluations: EvaluationEntity[] = [];
+    if (to) {
+      evaluations = await this.evaluationRepository.find({
+        order: { date: 'DESC' },
+        take: to - from,
+        skip: from,
+      });
+    } else {
+      evaluations = await this.evaluationRepository.find({
+        order: { date: 'DESC' },
+        skip: from,
+      });
+    }
     return evaluations;
   }
 
@@ -39,9 +52,9 @@ export class EvaluationRepository implements IEvaluation {
     const evaluation = await this.evaluationRepository.findOne({
       where: { referenceCode: referenceCode },
     });
-    // if (!evaluation) {
-    //   throw new NotFoundException('Evaluación no encontrada');
-    // }
+    if (!evaluation) {
+      throw new NotFoundException('Evaluación no encontrada');
+    }
     return evaluation;
   }
 
@@ -50,6 +63,7 @@ export class EvaluationRepository implements IEvaluation {
   ): Promise<EvaluationEntity[]> {
     const evaluations = await this.evaluationRepository.find({
       where: { username: username },
+      take: process.env.TOP_LIST ? parseInt(process.env.TOP_LIST) : 10,
       order: { date: 'DESC' },
     });
     return evaluations;

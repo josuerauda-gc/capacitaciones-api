@@ -49,7 +49,7 @@ export class EvaluationDetailController {
     @Body() evaluationDetailDto: EvaluationDetailRequestDto,
   ) {
     if (!authorization) {
-      throw new ValidationException('Authorization header is required');
+      throw new ValidationException('Token no ha sido transmitido');
     }
     const token = authorization.split(' ')[1];
     return await this.createEvaluationDetail.execute(
@@ -70,7 +70,7 @@ export class EvaluationDetailController {
     @Body() evaluationDetailDto: EvaluationDetailRequestDto,
   ) {
     if (!authorization) {
-      throw new ValidationException('Authorization header is required');
+      throw new ValidationException('Token no ha sido transmitido');
     }
     const token = authorization.split(' ')[1];
     return await this.updateEvaluationDetail.execute(
@@ -91,7 +91,7 @@ export class EvaluationDetailController {
     @Param('evaluationDetailId') evaluationDetailId: number,
   ) {
     if (!authorization) {
-      throw new ValidationException('Authorization header is required');
+      throw new ValidationException('Token no ha sido transmitido');
     }
     const token = authorization.split(' ')[1];
     return await this.deleteEvaluationDetail.execute(evaluationDetailId, token);

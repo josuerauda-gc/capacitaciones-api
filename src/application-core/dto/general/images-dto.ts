@@ -8,14 +8,23 @@ export class ImagesDto {
   @ApiProperty({ description: 'ID de imagen' })
   idImg?: number;
   @Expose()
-  @IsNotEmpty({ message: 'name es requerido' })
-  @IsString({ message: 'name debe ser un string' })
+  @IsNotEmpty({ message: 'El nombre de la imagen es requerido' })
+  @IsString({ message: 'El nombre de la imagen debe ser una cadena de texto' })
   @ApiProperty({ description: 'Nombre de imagen' })
   name: string;
   @Expose()
-  @IsNotEmpty({ message: 'base64 es requerido' })
-  @IsString({ message: 'base64 debe ser un string.' })
-  @IsBase64({}, { message: 'base64 debe ser una cadena Base64 válida.' })
+  @IsNotEmpty({ message: 'Contenido de imagen es requerida.' })
+  @IsString({
+    message:
+      'La imagen no ha sido seleccionada. Detalle técnico: base64 debe ser una cadena de texto.',
+  })
+  @IsBase64(
+    {},
+    {
+      message:
+        'La imagen no ha sido procesada correctamente. Detalle técnico: base64 debe ser una cadena Base64 válida.',
+    },
+  )
   @ApiProperty({ description: 'Base64 de imagen', type: String })
   base64: string;
 

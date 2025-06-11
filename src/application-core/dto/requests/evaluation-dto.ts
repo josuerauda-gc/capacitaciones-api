@@ -3,23 +3,25 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class EvaluationRequestDto {
   @IsOptional()
-  @IsString({ message: 'referenceCode debe ser un string.' })
-  @ApiProperty({ description: 'Código de referencia de evaluación' })
+  @IsString({
+    message: 'El código de referencia debe ser una cadena de texto.',
+  })
+  @ApiProperty({ description: 'El código de referencia de evaluación' })
   referenceCode?: string;
-  @IsNotEmpty({ message: 'branchId es requerido.' })
-  @IsNumber({}, { message: 'branchId debe ser un número.' })
+  @IsNotEmpty({ message: 'La sucursal es requerida.' })
+  @IsNumber({}, { message: 'No se envió el ID de sucursal.' })
   @ApiProperty({ description: 'ID de sucursal' })
   branchId: number;
-  @IsNotEmpty({ message: 'branchName es requerido.' })
-  @IsString({ message: 'branchName debe ser un string.' })
+  @IsNotEmpty({ message: 'La sucursal es requerida.' })
+  @IsString({ message: 'La sucursal debe ser una cadena de texto.' })
   @ApiProperty({ description: 'Nombre de sucursal' })
   branchName: string;
-  @IsNotEmpty({ message: 'managerName es requerido.' })
-  @IsString({ message: 'managerName debe ser un string.' })
+  @IsNotEmpty({ message: 'El nombre gerente es requerido.' })
+  @IsString({ message: 'El nombre gerente debe ser una cadena de texto.' })
   @ApiProperty({ description: 'Nombre de gerente de turno' })
   managerName: string;
-  @IsNotEmpty({ message: 'evaluatorName es requerido.' })
-  @IsString({ message: 'evaluatorName debe ser un string.' })
+  @IsNotEmpty({ message: 'El evaluador es requerido.' })
+  @IsString({ message: 'El evaluador debe ser una cadena de texto.' })
   @ApiProperty({ description: 'Nombre de evaluador' })
   evaluatorName: string;
   // @IsNotEmpty({ message: 'username es requerido.' })
@@ -27,7 +29,7 @@ export class EvaluationRequestDto {
   // @ApiProperty({ description: 'Nombre de usuario' })
   // username?: string;
   @IsOptional()
-  @IsString({ message: 'comments debe ser un string.' })
+  @IsString({ message: 'Los comentarios deben ser una cadena de texto.' })
   @ApiProperty({ description: 'Comentarios' })
   comments?: string;
 

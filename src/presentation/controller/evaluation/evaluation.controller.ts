@@ -6,6 +6,7 @@ import {
   HttpCode,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { CloseEvaluationDto } from 'src/application-core/dto/requests/close-evaluation-dto';
@@ -13,6 +14,7 @@ import { EvaluationRequestDto } from 'src/application-core/dto/requests/evaluati
 import { EvaluationResponseDto } from 'src/application-core/dto/responses/evaluation-dto';
 import { EvaluationReportDto } from 'src/application-core/dto/responses/evaluation-report-dto';
 import { ValidationException } from 'src/application-core/exception/validation-exception';
+import { IFilters } from 'src/application-core/interfaces/i-filters';
 import { CloseEvaluation } from 'src/application-core/use-cases/close-evaluation';
 import { CreateEvaluation } from 'src/application-core/use-cases/create-evaluation';
 import { GetAllEvaluations } from 'src/application-core/use-cases/get-all-evaluations';
@@ -39,8 +41,17 @@ export class EvaluationController {
     description: 'Listado de evaluaciones',
     type: EvaluationResponseDto,
   })
-  async getAllEvaluations() {
-    return await this.getAllEvaluationsUseCase.execute();
+  async getAllEvaluations(
+    @Query('from') from?: number,
+    @Query('to') to?: number,
+  ) {
+    if (from && isNaN(from)) {
+      throw new ValidationException('El parámetro desde debe ser un número');
+    }
+    if (to && isNaN(to)) {
+      throw new ValidationException('El parámetro hasta debe ser un número');
+    }
+    return await this.getAllEvaluationsUseCase.execute(from, to);
   }
 
   @Get('lasts')
@@ -59,8 +70,40 @@ export class EvaluationController {
     description: 'Listado de evaluaciones',
     type: EvaluationReportDto,
   })
-  async getAllEvaluationsReports() {
-    return await this.getEvaluationsReports.execute();
+  async getAllEvaluationsReports(
+    @Query('branch') branch?: string,
+    @Query('category') category?: number,
+    @Query('area') area?: number,
+    @Query('typeObservation') typeObservation?: number,
+    @Query('date') date?: string,
+  ) {
+    if (branch && branch.match(/^[a-zA-Z0-9\s]+$/) === null) {
+      throw new ValidationException(
+        'El parámetro sucursal debe contener solo letras y números',
+      );
+    }
+    if (area && isNaN(area)) {
+      throw new ValidationException('El parámetro area debe ser un número');
+    }
+    if (typeObservation && isNaN(typeObservation)) {
+      throw new ValidationException(
+        'El parámetro tipo de observación debe ser un número',
+      );
+    }
+    if (date && date.match(/^\d{4}-\d{2}-\d{2}$/) === null) {
+      throw new ValidationException(
+        'El parámetro fecha debe ser una fecha válida (YYYY-MM-DD)',
+      );
+    }
+    const dateParsed = date ? new Date(date) : new Date();
+    const filters: IFilters = {
+      branch: branch ? branch : null,
+      category: category ? Number(category) : null,
+      area: area ? Number(area) : null,
+      typeObservation: typeObservation ? Number(typeObservation) : null,
+      date: date ? dateParsed : new Date(),
+    };
+    return await this.getEvaluationsReports.execute(filters);
   }
 
   @Get(':referenceCode')
@@ -96,7 +139,7 @@ export class EvaluationController {
     @Body() evaluationDto: EvaluationRequestDto,
   ) {
     if (!authorization) {
-      throw new ValidationException('Authorization header is required');
+      throw new ValidationException('Token no ha sido transmitido');
     }
     const token = authorization.split(' ')[1];
     return await this.createEvaluation.execute(evaluationDto, token);
@@ -115,7 +158,7 @@ export class EvaluationController {
     @Body() closeEvaluationDto: CloseEvaluationDto,
   ) {
     if (!authorization) {
-      throw new ValidationException('Authorization header is required');
+      throw new ValidationException('Token no ha sido transmitido');
     }
     const token = authorization.split(' ')[1];
     return await this.closeEvaluation.execute(
