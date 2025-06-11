@@ -81,14 +81,7 @@ export class EvaluationController {
     description: 'Obtener evaluaciones por nombre de usuario',
     type: EvaluationResponseDto,
   })
-  async getEvaluationsByUsername(
-    @Param('username') username: string,
-    // @Headers('authorization') authorization: string,
-  ) {
-    // if (!authorization) {
-    //   throw new ValidationException('Token es requerido en la petición');
-    // }
-    // const token = authorization.split(' ')[1];
+  async getEvaluationsByUsername(@Param('username') username: string) {
     return await this.getAllEvaluationsByUsername.execute(username);
   }
 

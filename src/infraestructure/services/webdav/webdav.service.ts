@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { ImagesDto } from 'src/application-core/dto/general/images-dto';
 import { AuthType, createClient, WebDAVClient } from 'webdav';
 import { NotFoundException } from 'src/application-core/exception/not-found-exception';
-import { ValidationException } from 'src/application-core/exception/validation-exception';
 
 @Injectable()
 export class WebdavService {

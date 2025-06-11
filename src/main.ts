@@ -10,6 +10,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ENVIRONMENT_DATA } from './application-core/interfaces/i-consul';
 import ConsulService from './infraestructure/services/consul/consul.service';
+import { formatValidationErrors } from './infraestructure/utils/format-validation-errors';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,21 +21,29 @@ async function bootstrap() {
       transform: true,
       forbidNonWhitelisted: true,
       exceptionFactory: (errors) => {
-        // Personaliza el mensaje de error
-        console.log('===================');
-        const detailedErrors = errors?.map((error) => {
-          if (error.children) console.log(JSON.stringify(error.children));
-          return (
-            error.constraints || [
-              `${error.property} tiene un campo no válido o no existe.`,
-            ]
-          );
-        });
-        console.log('===================');
-        throw new ValidationException(
-          'Errores de validación',
-          detailedErrors.map((error) => Object.values(error)).flat(),
+        console.log(
+          `Inicio del mensaje de error de validación - ${new Date()}`,
         );
+        const messages = formatValidationErrors(errors);
+        console.log(messages);
+        console.log('Fin del mensaje de error de validación');
+        throw new ValidationException('Errores de validación', messages);
+
+        // Personaliza el mensaje de error
+        // console.log('===================');
+        // const detailedErrors = errors?.map((error) => {
+        //   if (error.children) console.log(JSON.stringify(error.children));
+        //   return (
+        //     error.constraints || [
+        //       `${error.property} tiene un campo no válido o no existe.`,
+        //     ]
+        //   );
+        // });
+        // console.log('===================');
+        // throw new ValidationException(
+        //   'Errores de validación',
+        //   detailedErrors.map((error) => Object.values(error)).flat(),
+        // );
       },
     }),
   );
