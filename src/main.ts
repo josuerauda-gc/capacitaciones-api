@@ -28,22 +28,6 @@ async function bootstrap() {
         console.log(messages);
         console.log('Fin del mensaje de error de validación');
         throw new ValidationException('Errores de validación', messages);
-
-        // Personaliza el mensaje de error
-        // console.log('===================');
-        // const detailedErrors = errors?.map((error) => {
-        //   if (error.children) console.log(JSON.stringify(error.children));
-        //   return (
-        //     error.constraints || [
-        //       `${error.property} tiene un campo no válido o no existe.`,
-        //     ]
-        //   );
-        // });
-        // console.log('===================');
-        // throw new ValidationException(
-        //   'Errores de validación',
-        //   detailedErrors.map((error) => Object.values(error)).flat(),
-        // );
       },
     }),
   );

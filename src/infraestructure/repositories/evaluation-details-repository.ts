@@ -114,6 +114,9 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
     const existingEvaluationDetail =
       await this.evaluationDetailRepository.findOne({
         where: { evaluationDetailId: id },
+        relations: {
+          evaluation: true,
+        },
       });
     if (!existingEvaluationDetail) {
       throw new NotFoundException('No se encontró el detalle de evaluación');
