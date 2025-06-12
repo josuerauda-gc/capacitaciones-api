@@ -1,7 +1,7 @@
 export interface IFilters {
-  branch?: number | null;
-  category?: number | null;
-  typeObservation?: number | null;
-  area?: number | null;
+  branches?: number[] | null;
+  categories?: number[] | null;
+  typesObservations?: number[] | null;
+  areas?: number[] | null;
   date?: Date;
 }

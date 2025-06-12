@@ -71,22 +71,49 @@ export class EvaluationController {
     type: EvaluationReportDto,
   })
   async getAllEvaluationsReports(
-    @Query('branch') branch?: number,
-    @Query('category') category?: number,
-    @Query('area') area?: number,
-    @Query('typeObservation') typeObservation?: number,
+    @Query('branch') branch?: string,
+    @Query('category') category?: string,
+    @Query('area') area?: string,
+    @Query('typeObservation') typeObservation?: string,
     @Query('date') date?: string,
   ) {
-    if (branch && isNaN(branch)) {
-      throw new ValidationException('El parámetro sucursal debe ser un número');
+    let branches = [];
+    let areas = [];
+    let categories = [];
+    let typesObservations = [];
+    if (branch) {
+      branches = branch.split(',').map((b) => Number(b.trim()));
+      if (branches.some((b) => isNaN(b))) {
+        throw new ValidationException(
+          'El parámetro sucursal debe ser un número y separados por comas',
+        );
+      }
     }
-    if (area && isNaN(area)) {
-      throw new ValidationException('El parámetro area debe ser un número');
+    if (area) {
+      areas = area.split(',').map((a) => Number(a.trim()));
+      if (areas.some((a) => isNaN(a))) {
+        throw new ValidationException(
+          'El parámetro area debe ser un número y separados por comas',
+        );
+      }
     }
-    if (typeObservation && isNaN(typeObservation)) {
-      throw new ValidationException(
-        'El parámetro tipo de observación debe ser un número',
-      );
+    if (category) {
+      categories = category.split(',').map((c) => Number(c.trim()));
+      if (categories.some((c) => isNaN(c))) {
+        throw new ValidationException(
+          'El parámetro categoría debe ser un número y separados por comas',
+        );
+      }
+    }
+    if (typeObservation) {
+      typesObservations = typeObservation
+        .split(',')
+        .map((t) => Number(t.trim()));
+      if (typesObservations.some((t) => isNaN(t))) {
+        throw new ValidationException(
+          'El parámetro tipo de observación debe ser un número y separados por comas',
+        );
+      }
     }
     if (!date) {
       throw new ValidationException(
@@ -100,10 +127,10 @@ export class EvaluationController {
     }
     const dateParsed = date ? new Date(date) : new Date();
     const filters: IFilters = {
-      branch: branch ? branch : null,
-      category: category ? Number(category) : null,
-      area: area ? Number(area) : null,
-      typeObservation: typeObservation ? Number(typeObservation) : null,
+      branches: branch ? branches : null,
+      categories: category ? categories : null,
+      areas: area ? areas : null,
+      typesObservations: typeObservation ? typesObservations : null,
       date: date ? dateParsed : new Date(),
     };
     return await this.getEvaluationsReports.execute(filters);

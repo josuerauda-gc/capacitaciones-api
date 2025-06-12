@@ -7,7 +7,7 @@ import { NotFoundException } from 'src/application-core/exception/not-found-exce
 import { ValidationException } from 'src/application-core/exception/validation-exception';
 import IEvaluationDetail from 'src/application-core/interfaces/i-evaluation-detail';
 import { IFilters } from 'src/application-core/interfaces/i-filters';
-import { Between, Repository } from 'typeorm';
+import { Between, In, Repository } from 'typeorm';
 
 @Injectable()
 export class EvaluationDetailsRepository implements IEvaluationDetail {
@@ -23,25 +23,25 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
   ): Promise<EvaluationDetailEntity[]> {
     let whereFilter: any = {};
     if (filters) {
-      if (filters.branch) {
-        whereFilter.evaluation = { branchId: filters.branch };
+      if (filters.branches) {
+        whereFilter.evaluation = { branchId: In(filters.branches) };
       }
-      if (filters.area) {
+      if (filters.areas) {
         whereFilter = {
           ...whereFilter,
-          area: { areaId: filters.area },
+          area: { areaId: In(filters.areas) },
         };
       }
-      if (filters.category) {
+      if (filters.categories) {
         whereFilter = {
           ...whereFilter,
-          category: { categoryId: filters.category },
+          category: { categoryId: In(filters.categories) },
         };
       }
-      if (filters.typeObservation) {
+      if (filters.typesObservations) {
         whereFilter = {
           ...whereFilter,
-          typeObservation: { typeObservationId: filters.typeObservation },
+          typeObservation: { typeObservationId: In(filters.typesObservations) },
         };
       }
       if (filters.date) {
