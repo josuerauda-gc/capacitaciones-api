@@ -90,6 +90,11 @@ export class EvaluationController {
         'El parámetro tipo de observación debe ser un número',
       );
     }
+    if (!date) {
+      throw new ValidationException(
+        'El parámetro fecha es obligatorio y debe ser una fecha válida (YYYY-MM-DD)',
+      );
+    }
     if (date && date.match(/^\d{4}-\d{2}-\d{2}$/) === null) {
       throw new ValidationException(
         'El parámetro fecha debe ser una fecha válida (YYYY-MM-DD)',
