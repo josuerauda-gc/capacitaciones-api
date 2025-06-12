@@ -24,7 +24,7 @@ export class EvaluationDetailsRepository implements IEvaluationDetail {
     let whereFilter: any = {};
     if (filters) {
       if (filters.branch) {
-        whereFilter.evaluation = { branchName: filters.branch };
+        whereFilter.evaluation = { branchId: filters.branch };
       }
       if (filters.area) {
         whereFilter = {

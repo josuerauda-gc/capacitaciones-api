@@ -23,6 +23,7 @@ export class GetEvaluationsReports {
         ...evaluationDetail,
         evaluationId: evaluationDetail.evaluation.evaluationId,
         referenceCode: evaluationDetail.evaluation.referenceCode,
+        branchId: evaluationDetail.evaluation.branchId,
         branchName: evaluationDetail.evaluation.branchName,
         managerName: evaluationDetail.evaluation.managerName,
         evaluatorName: evaluationDetail.evaluation.evaluatorName,

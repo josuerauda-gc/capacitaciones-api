@@ -18,6 +18,9 @@ export class EvaluationReportDto {
   @ApiProperty({ description: 'ID de evaluación' })
   evaluationId: number;
   @Expose()
+  @ApiProperty({ description: 'ID de sucursal' })
+  branchId: number;
+  @Expose()
   @ApiProperty({ description: 'Nombre de sucursal' })
   branchName: string;
   @Expose()

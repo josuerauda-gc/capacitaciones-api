@@ -71,16 +71,14 @@ export class EvaluationController {
     type: EvaluationReportDto,
   })
   async getAllEvaluationsReports(
-    @Query('branch') branch?: string,
+    @Query('branch') branch?: number,
     @Query('category') category?: number,
     @Query('area') area?: number,
     @Query('typeObservation') typeObservation?: number,
     @Query('date') date?: string,
   ) {
-    if (branch && branch.match(/^[a-zA-Z0-9\s]+$/) === null) {
-      throw new ValidationException(
-        'El parámetro sucursal debe contener solo letras y números',
-      );
+    if (branch && isNaN(branch)) {
+      throw new ValidationException('El parámetro sucursal debe ser un número');
     }
     if (area && isNaN(area)) {
       throw new ValidationException('El parámetro area debe ser un número');
