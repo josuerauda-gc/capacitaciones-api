@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsBase64, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsBase64,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 
 export class ImagesDto {
   @Expose({ name: 'nKey' })
@@ -10,6 +16,10 @@ export class ImagesDto {
   @Expose()
   @IsNotEmpty({ message: 'El nombre de la imagen es requerido' })
   @IsString({ message: 'El nombre de la imagen debe ser una cadena de texto' })
+  @Matches(/^[A-Za-z0-9]+\.[A-Za-z0-9]+$/, {
+    message:
+      'El nombre de la imagen solo puede contener letras, números y un punto para la extensión (ej: imagen01.png)',
+  })
   @ApiProperty({ description: 'Nombre de imagen' })
   name: string;
   @Expose()
