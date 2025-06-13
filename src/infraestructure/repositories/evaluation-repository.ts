@@ -100,6 +100,7 @@ export class EvaluationRepository implements IEvaluation {
       isOpen: true,
       username,
       ...evaluation,
+      managerName: evaluation.managerName ? evaluation.managerName : '',
       comments: evaluation.comments ? evaluation.comments : '',
     };
     return await this.evaluationRepository.save(newEvaluation);

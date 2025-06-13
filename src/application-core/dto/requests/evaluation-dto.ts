@@ -16,10 +16,10 @@ export class EvaluationRequestDto {
   @IsString({ message: 'La sucursal debe ser una cadena de texto.' })
   @ApiProperty({ description: 'Nombre de sucursal' })
   branchName: string;
-  @IsNotEmpty({ message: 'El nombre gerente es requerido.' })
+  @IsOptional()
   @IsString({ message: 'El nombre gerente debe ser una cadena de texto.' })
   @ApiProperty({ description: 'Nombre de gerente de turno' })
-  managerName: string;
+  managerName?: string;
   @IsNotEmpty({ message: 'El evaluador es requerido.' })
   @IsString({ message: 'El evaluador debe ser una cadena de texto.' })
   @ApiProperty({ description: 'Nombre de evaluador' })
