@@ -119,9 +119,7 @@ export class WebdavService {
     const pathImage = `${process.env.WEBDAV_PATH || '/'}${evaluationCode}/${imageName}`;
     const exists = await this.webdavClient.exists(pathImage);
     if (!exists) {
-      console.log(
-        `Imagen no encontrada ${pathImage}, retornando imagen por defecto`,
-      );
+      console.log(`Imagen no encontrada ${pathImage} para eliminar`);
     } else {
       await this.webdavClient.deleteFile(pathImage);
     }
