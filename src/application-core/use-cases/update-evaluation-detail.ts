@@ -50,6 +50,7 @@ export class UpdateEvaluationDetail {
           const existingImage = evaluationDetailImages.find(
             (img) => img.imgPath === image.name,
           );
+          console.log('empieza aqui');
           if (existingImage) {
             images.push({
               nKey: existingImage.nKey,

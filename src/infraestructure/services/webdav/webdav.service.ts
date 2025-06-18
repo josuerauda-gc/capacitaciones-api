@@ -26,7 +26,9 @@ export class WebdavService {
           'Se conectó correctamente al servidor por medio de WebDAV 🌐',
         );
       }
-      const imgTest = fs.readFileSync(`${__dirname}/mip.jpg`);
+      const imgTest = fs.readFileSync(
+        `${process.env.DEV ? 'src/infraestructure/services/webdav' : __dirname}/mip.jpg`,
+      );
       await this.saveImage('test', {
         idImg: 0,
         name: 'mip.jpg',
@@ -83,7 +85,9 @@ export class WebdavService {
       console.log(
         `Imagen no encontrada ${pathImage}, retornando imagen por defecto`,
       );
-      const noImageFound = fs.readFileSync(`${__dirname}/noimage.jpg`);
+      const noImageFound = fs.readFileSync(
+        `${process.env.DEV ? 'src/infraestructure/services/webdav' : __dirname}/noimage.jpg`,
+      );
       return `data:image/jpeg;base64,${Buffer.from(noImageFound).toString('base64')}`;
     }
     const fileContents = (await this.webdavClient.getFileContents(pathImage, {
@@ -93,7 +97,9 @@ export class WebdavService {
       console.log(
         `Imagen no encontrada ${pathImage}, retornando imagen por defecto`,
       );
-      const noImageFound = fs.readFileSync(`${__dirname}/noimage.jpg`);
+      const noImageFound = fs.readFileSync(
+        `${process.env.DEV ? 'src/infraestructure/services/webdav' : __dirname}/noimage.jpg`,
+      );
       return `data:image/jpeg;base64,${Buffer.from(noImageFound).toString('base64')}`;
     }
     const arrayBuffer = fileContents.buffer.slice(
@@ -110,7 +116,14 @@ export class WebdavService {
   }
 
   async deleteImage(evaluationCode: string, imageName: string): Promise<void> {
-    const path = `${process.env.WEBDAV_PATH || '/'}${evaluationCode}/${imageName}`;
-    await this.webdavClient.deleteFile(path);
+    const pathImage = `${process.env.WEBDAV_PATH || '/'}${evaluationCode}/${imageName}`;
+    const exists = await this.webdavClient.exists(pathImage);
+    if (!exists) {
+      console.log(
+        `Imagen no encontrada ${pathImage}, retornando imagen por defecto`,
+      );
+    } else {
+      await this.webdavClient.deleteFile(pathImage);
+    }
   }
 }

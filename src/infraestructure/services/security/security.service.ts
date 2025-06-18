@@ -16,9 +16,7 @@ export default class SecurityService implements ISecurity {
       const securityName = process.env.SECURITY_SERVICE || '';
       const microData = await this.consulService.GetServiceData(securityName);
       const security = microData;
-      const host: string = process.env.DEV
-        ? process.env.APP_HOST || 'localhost'
-        : security.host;
+      const host: string = process.env.DEV ? 'localhost' : security.host;
       const port = process.env.DEV ? 88 : security.port;
       const url = `http://${host}:${port}/user/data`;
       // const url = `http://localhost:${port}/user/data`;
