@@ -22,7 +22,7 @@ export default interface IEvaluation {
     closeEvaluationDto: CloseEvaluationDto,
     username: string,
   ): Promise<EvaluationEntity>;
-  // deleteEvaluation(id: number): Promise<string>;
+  deleteEvaluation(referenceCode: string, username: string): Promise<string>;
   // getAllEvaluationsByAreaId(areaId: number): Promise<EvaluationEntity[]>;
   // getAllEvaluationsByCategoryId(
   //   categoryId: number,

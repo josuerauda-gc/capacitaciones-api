@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Headers,
   HttpCode,
@@ -17,6 +18,7 @@ import { ValidationException } from 'src/application-core/exception/validation-e
 import { IFilters } from 'src/application-core/interfaces/i-filters';
 import { CloseEvaluation } from 'src/application-core/use-cases/close-evaluation';
 import { CreateEvaluation } from 'src/application-core/use-cases/create-evaluation';
+import { DeleteEvaluationByReferenceCode } from 'src/application-core/use-cases/delete-evaluation-by-reference-code';
 import { GetAllEvaluations } from 'src/application-core/use-cases/get-all-evaluations';
 import { GetAllEvaluationsByUsername } from 'src/application-core/use-cases/get-all-evaluations-by-username';
 import { GetEvaluationByReferenceCode } from 'src/application-core/use-cases/get-evaluation-by-reference-code';
@@ -33,7 +35,8 @@ export class EvaluationController {
     private readonly getEvaluationsReports: GetEvaluationsReports,
     private readonly getLastEvaluationsBranch: GetLastsEvaluations,
     private readonly getAllEvaluationsByUsername: GetAllEvaluationsByUsername,
-  ) {}
+    private readonly deleteEvaluationByReferenceCode: DeleteEvaluationByReferenceCode,
+  ) { }
 
   @Get()
   @ApiResponse({
@@ -145,6 +148,11 @@ export class EvaluationController {
   async getEvaluationByIdHandler(
     @Param('referenceCode') referenceCode: string,
   ) {
+    if (!referenceCode) {
+      throw new ValidationException(
+        'No se ha específicado un código de referencia válido',
+      );
+    }
     return await this.getEvaluationByReferenceCode.execute(referenceCode);
   }
 
@@ -155,6 +163,11 @@ export class EvaluationController {
     type: EvaluationResponseDto,
   })
   async getEvaluationsByUsername(@Param('username') username: string) {
+    if (!username) {
+      throw new ValidationException(
+        'No se ha específicado un nombre de usuario válido',
+      );
+    }
     return await this.getAllEvaluationsByUsername.execute(username);
   }
 
@@ -187,6 +200,11 @@ export class EvaluationController {
     @Param('referenceCode') referenceCode: string,
     @Body() closeEvaluationDto: CloseEvaluationDto,
   ) {
+    if (!referenceCode) {
+      throw new ValidationException(
+        'El código de referencia es obligatorio para cerrar la evaluación',
+      );
+    }
     if (!authorization) {
       throw new ValidationException('Token no ha sido transmitido');
     }
@@ -194,6 +212,31 @@ export class EvaluationController {
     return await this.closeEvaluation.execute(
       referenceCode,
       closeEvaluationDto,
+      token,
+    );
+  }
+
+  @Delete(':referenceCode')
+  @HttpCode(200)
+  @ApiResponse({
+    status: 200,
+    description: 'Evaluación eliminada exitosamente',
+  })
+  async deleteEvaluationHandler(
+    @Headers('authorization') authorization: string,
+    @Param('referenceCode') referenceCode: string,
+  ) {
+    if (!referenceCode) {
+      throw new ValidationException(
+        'No se ha específicado un código de referencia válido',
+      );
+    }
+    if (!authorization) {
+      throw new ValidationException('Token no ha sido transmitido');
+    }
+    const token = authorization.split(' ')[1];
+    return await this.deleteEvaluationByReferenceCode.execute(
+      referenceCode,
       token,
     );
   }

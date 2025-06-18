@@ -9,7 +9,7 @@ import EmployedRequest from 'src/application-core/wrapper/employed-request';
 
 @Injectable()
 export default class SecurityService implements ISecurity {
-  constructor(private readonly consulService: ConsulService) {}
+  constructor(private readonly consulService: ConsulService) { }
 
   async GetUserData(token: string) {
     try {

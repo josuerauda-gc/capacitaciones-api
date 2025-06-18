@@ -15,6 +15,7 @@ import { GetEvaluationsReports } from './use-cases/get-evaluations-reports';
 import { GetLastsEvaluations } from './use-cases/get-lasts-evaluations';
 import { GetEvaluationByReferenceCode } from './use-cases/get-evaluation-by-reference-code';
 import { GetAllEvaluationsByUsername } from './use-cases/get-all-evaluations-by-username';
+import { DeleteEvaluationByReferenceCode } from './use-cases/delete-evaluation-by-reference-code';
 
 @Module({
   imports: [DatabaseContextModule, InfraestructureExportModule],
@@ -27,6 +28,7 @@ import { GetAllEvaluationsByUsername } from './use-cases/get-all-evaluations-by-
     GetEvaluationByReferenceCode,
     CreateEvaluation,
     CloseEvaluation,
+    DeleteEvaluationByReferenceCode,
     GetEvaluationDetailById,
     CreateEvaluationDetail,
     UpdateEvaluationDetail,
@@ -43,6 +45,7 @@ import { GetAllEvaluationsByUsername } from './use-cases/get-all-evaluations-by-
     GetEvaluationByReferenceCode,
     CreateEvaluation,
     CloseEvaluation,
+    DeleteEvaluationByReferenceCode,
     GetEvaluationDetailById,
     CreateEvaluationDetail,
     UpdateEvaluationDetail,
@@ -51,4 +54,4 @@ import { GetAllEvaluationsByUsername } from './use-cases/get-all-evaluations-by-
     GetLastsEvaluations,
   ],
 })
-export class ApplicationCoreExportModule {}
+export class ApplicationCoreExportModule { }

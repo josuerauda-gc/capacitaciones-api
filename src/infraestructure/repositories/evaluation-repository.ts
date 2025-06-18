@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EvaluationDetailEntity } from 'src/application-core/domain/entities/evaluation-detail-entity';
 import { EvaluationEntity } from 'src/application-core/domain/entities/evaluation-entity';
 import { CloseEvaluationDto } from 'src/application-core/dto/requests/close-evaluation-dto';
 import { EvaluationRequestDto } from 'src/application-core/dto/requests/evaluation-dto';
@@ -14,7 +15,9 @@ export class EvaluationRepository implements IEvaluation {
   constructor(
     @InjectRepository(EvaluationEntity)
     private readonly evaluationRepository: Repository<EvaluationEntity>,
-  ) {}
+    @InjectRepository(EvaluationDetailEntity)
+    private readonly evaluationDetailRepository: Repository<EvaluationDetailEntity>,
+  ) { }
 
   async getAllEvaluations(
     from: number = 0,
@@ -142,6 +145,14 @@ export class EvaluationRepository implements IEvaluation {
     if (!existingEvaluation.isOpen) {
       throw new ValidationException('La evaluación ya está cerrada');
     }
+    const evaluationDetails = await this.evaluationDetailRepository.find({
+      where: { evaluation: { evaluationId: existingEvaluation.evaluationId } },
+    });
+    if (evaluationDetails.length === 0) {
+      throw new ValidationException(
+        'No se puede cerrar la evaluación porque no tiene detalles asociados',
+      );
+    }
     const updatedEvaluation = {
       ...existingEvaluation,
       ...evaluationClose,
@@ -150,14 +161,33 @@ export class EvaluationRepository implements IEvaluation {
     return await this.evaluationRepository.save(updatedEvaluation);
   }
 
-  // async deleteEvaluation(id: number): Promise<string> {
-  //   const existingEvaluation = await this.evaluationRepository.findOne({
-  //     where: { evaluationId: id },
-  //   });
-  //   if (!existingEvaluation) {
-  //     throw new NotFoundException('Evaluation no encontrada');
-  //   }
-  //   await this.evaluationRepository.delete(id);
-  //   return 'Evaluación eliminada correctamente';
-  // }
+  async deleteEvaluation(
+    referenceCode: string,
+    username: string,
+  ): Promise<string> {
+    const existingEvaluation = await this.evaluationRepository.findOne({
+      where: { referenceCode },
+    });
+    if (!existingEvaluation) {
+      throw new NotFoundException('Evaluation no encontrada');
+    }
+    if (username !== existingEvaluation.username) {
+      throw new ValidationException(
+        'No tienes permiso para eliminar esta evaluación',
+      );
+    }
+    if (!existingEvaluation.isOpen) {
+      throw new ValidationException('La evaluación ya está cerrada');
+    }
+    const evaluationDetails = await this.evaluationDetailRepository.find({
+      where: { evaluation: { evaluationId: existingEvaluation.evaluationId } },
+    });
+    if (evaluationDetails.length > 0) {
+      throw new ValidationException(
+        'No se puede eliminar la evaluación porque tiene detalles asociados',
+      );
+    }
+    await this.evaluationRepository.delete(existingEvaluation.evaluationId);
+    return 'Evaluación eliminada correctamente';
+  }
 }

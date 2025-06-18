@@ -69,6 +69,11 @@ export class EvaluationDetailController {
     @Param('evaluationDetailId') evaluationDetailId: number,
     @Body() evaluationDetailDto: EvaluationDetailRequestDto,
   ) {
+    if (isNaN(evaluationDetailId)) {
+      throw new ValidationException(
+        'No se ha específicado un ID de detalle de evaluación válido',
+      );
+    }
     if (!authorization) {
       throw new ValidationException('Token no ha sido transmitido');
     }
@@ -90,6 +95,11 @@ export class EvaluationDetailController {
     @Headers('authorization') authorization: string,
     @Param('evaluationDetailId') evaluationDetailId: number,
   ) {
+    if (isNaN(evaluationDetailId)) {
+      throw new ValidationException(
+        'No se ha específicado un ID de detalle de evaluación válido',
+      );
+    }
     if (!authorization) {
       throw new ValidationException('Token no ha sido transmitido');
     }

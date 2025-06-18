@@ -15,7 +15,7 @@ export function formatValidationErrors(
 
     if (error.constraints) {
       for (const constraint of Object.values(error.constraints)) {
-        messages.push(`${propertyPath}: ${constraint}`);
+        messages.push(`${constraint}`);
       }
     }
 
