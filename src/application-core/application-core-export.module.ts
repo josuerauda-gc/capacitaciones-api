@@ -54,4 +54,4 @@ import { DeleteEvaluationByReferenceCode } from './use-cases/delete-evaluation-b
     GetLastsEvaluations,
   ],
 })
-export class ApplicationCoreExportModule { }
+export class ApplicationCoreExportModule {}

@@ -36,7 +36,7 @@ export class EvaluationController {
     private readonly getLastEvaluationsBranch: GetLastsEvaluations,
     private readonly getAllEvaluationsByUsername: GetAllEvaluationsByUsername,
     private readonly deleteEvaluationByReferenceCode: DeleteEvaluationByReferenceCode,
-  ) { }
+  ) {}
 
   @Get()
   @ApiResponse({

@@ -9,7 +9,7 @@ export class DeleteEvaluationByReferenceCode {
     @Inject(EVALUATION_SERVICE)
     private readonly evaluationRepository: EvaluationRepository,
     private readonly securityService: SecurityService,
-  ) { }
+  ) {}
 
   async execute(referenceCode: string, token: string): Promise<void> {
     const userData = await this.securityService.GetUserData(token);

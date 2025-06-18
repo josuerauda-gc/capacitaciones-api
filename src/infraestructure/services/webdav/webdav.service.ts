@@ -82,13 +82,25 @@ export class WebdavService {
     const path = `${process.env.WEBDAV_PATH || '/'}${evaluationCode}/${imageName}`;
     const exists = await this.webdavClient.exists(path);
     if (!exists) {
-      throw new NotFoundException(`No se encontró la imagen: ${imageName}`);
+      console.log(
+        `Imagen no encontrada ${path}, retornando imagen por defecto`,
+      );
+      const noImageFound = fs.readFileSync(
+        'src/infraestructure/services/webdav/noimage.jpg',
+      );
+      return `data:image/jpeg;base64,${Buffer.from(noImageFound).toString('base64')}`;
     }
     const fileContents = (await this.webdavClient.getFileContents(path, {
       format: 'binary',
     })) as Buffer;
     if (!fileContents) {
-      throw new NotFoundException(`No se encontró la imagen: ${imageName}`);
+      console.log(
+        `Imagen no encontrada ${path}, retornando imagen por defecto`,
+      );
+      const noImageFound = fs.readFileSync(
+        'src/infraestructure/services/webdav/noimage.jpg',
+      );
+      return `data:image/jpeg;base64,${Buffer.from(noImageFound).toString('base64')}`;
     }
     const arrayBuffer = fileContents.buffer.slice(
       fileContents.byteOffset,

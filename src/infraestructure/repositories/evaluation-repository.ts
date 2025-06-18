@@ -17,7 +17,7 @@ export class EvaluationRepository implements IEvaluation {
     private readonly evaluationRepository: Repository<EvaluationEntity>,
     @InjectRepository(EvaluationDetailEntity)
     private readonly evaluationDetailRepository: Repository<EvaluationDetailEntity>,
-  ) { }
+  ) {}
 
   async getAllEvaluations(
     from: number = 0,
