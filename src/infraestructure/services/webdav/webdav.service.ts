@@ -26,9 +26,7 @@ export class WebdavService {
           'Se conectó correctamente al servidor por medio de WebDAV 🌐',
         );
       }
-      const imgTest = fs.readFileSync(
-        'src/infraestructure/services/webdav/mip.jpg',
-      );
+      const imgTest = fs.readFileSync(`${__dirname}/mip.jpg`);
       await this.saveImage('test', {
         idImg: 0,
         name: 'mip.jpg',
@@ -61,13 +59,13 @@ export class WebdavService {
         `El tipo de imagen ${typeImage} no es válido. Solo se permiten jpg, jpeg y png.`,
       );
     }
-    const path = `${initialPath}${evaluationCode}/${image.name}`;
+    const pathImage = `${initialPath}${evaluationCode}/${image.name}`;
     const cleanBase64 = image.base64.replace(
       /^data:(image|application)\/[a-zA-Z0-9+.-]+;base64,/,
       '',
     );
     return await this.webdavClient.putFileContents(
-      path,
+      pathImage,
       await Buffer.from(cleanBase64, 'base64'),
       {
         overwrite: true,
@@ -79,27 +77,23 @@ export class WebdavService {
   }
 
   async getImage(evaluationCode: string, imageName: string): Promise<string> {
-    const path = `${process.env.WEBDAV_PATH || '/'}${evaluationCode}/${imageName}`;
-    const exists = await this.webdavClient.exists(path);
+    const pathImage = `${process.env.WEBDAV_PATH || '/'}${evaluationCode}/${imageName}`;
+    const exists = await this.webdavClient.exists(pathImage);
     if (!exists) {
       console.log(
-        `Imagen no encontrada ${path}, retornando imagen por defecto`,
+        `Imagen no encontrada ${pathImage}, retornando imagen por defecto`,
       );
-      const noImageFound = fs.readFileSync(
-        'src/infraestructure/services/webdav/noimage.jpg',
-      );
+      const noImageFound = fs.readFileSync(`${__dirname}/noimage.jpg`);
       return `data:image/jpeg;base64,${Buffer.from(noImageFound).toString('base64')}`;
     }
-    const fileContents = (await this.webdavClient.getFileContents(path, {
+    const fileContents = (await this.webdavClient.getFileContents(pathImage, {
       format: 'binary',
     })) as Buffer;
     if (!fileContents) {
       console.log(
-        `Imagen no encontrada ${path}, retornando imagen por defecto`,
+        `Imagen no encontrada ${pathImage}, retornando imagen por defecto`,
       );
-      const noImageFound = fs.readFileSync(
-        'src/infraestructure/services/webdav/noimage.jpg',
-      );
+      const noImageFound = fs.readFileSync(`${__dirname}/noimage.jpg`);
       return `data:image/jpeg;base64,${Buffer.from(noImageFound).toString('base64')}`;
     }
     const arrayBuffer = fileContents.buffer.slice(
